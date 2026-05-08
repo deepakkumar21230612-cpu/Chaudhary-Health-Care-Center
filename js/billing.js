@@ -6,11 +6,11 @@ let currentBillPatientId = null;
 let currentBillData = null;
 
 const BILLING_ITEMS_LIST = [
-    "DR. FEES", "ICU CHARGE", "OXYGEN CHARGE", "NEBULIZER CHARGE", "MONITOR CHARGE",
+    "DR. FEES", "OXYGEN CHARGE", "NEBULIZER CHARGE", "MONITOR CHARGE",
     "SYRINGE PUMP CHARGE", "SUCTION CHARGE", "NURSING CHARGE", "RMO CHARGE",
-    "ANESTHETIC CHARGE", "OPRATION THEATER CHARGE", "BED CHARGE", "ECG CHARGE",
+    "ANESTHETIC CHARGE", "OPRATION THEATER CHARGE", "ECG CHARGE",
     "Advance Medicine Charge", "EMERGENCY MEDICINE CHARGE", "DILEVARY /DNC /Streech CHARGE",
-    "EMERGENCY BABY CARE/PHOTOTHERAPY", "X RAY CHARGE-", "PRIVATE AC ROOM CHARGE",
+    "EMERGENCY BABY CARE/PHOTOTHERAPY", "X RAY CHARGE-",
     "DRASSING CHARGE", "STORE MEDICINE CHARGE", "BloodInfusion Charge", "CONSULTATION FEE"
 ];
 
@@ -322,15 +322,21 @@ async function viewBill(patientId) {
         
         document.getElementById('discount-amt').value = currentBillData?.discount || 0;
         
-        initializeBillingTable(currentBillData?.items || []);
+        initializeBillingTable(currentBillData?.items || [], patient.bedHistory || []);
         renderPaymentHistory(currentBillData?.payments || []);
         
-        // Populate inputs
+        // Populate inputs for saved items
         const rows = document.querySelectorAll('#billing-items-body tr');
-        rows.forEach((row, idx) => {
-            if (currentBillData?.items?.[idx]) {
-                row.querySelector('.fee-input').value = currentBillData.items[idx].fee || '';
-                row.querySelector('.days-input').value = currentBillData.items[idx].days || '';
+        rows.forEach((row) => {
+            const itemName = row.getAttribute('data-item-name');
+            const savedItem = currentBillData?.items?.find(i => i.name === itemName);
+            
+            // Only overwrite if it's a static item or we have specifically saved it manually
+            // Bed history rows have readonly inputs, but if they were saved, we can restore them if needed.
+            // For now, if it's a bed charge, we rely on the dynamic calculated values from initializeBillingTable.
+            if (savedItem && !itemName.startsWith('Bed Charge')) {
+                row.querySelector('.fee-input').value = savedItem.fee || '';
+                row.querySelector('.days-input').value = savedItem.days || '';
             }
         });
 
@@ -343,17 +349,46 @@ async function viewBill(patientId) {
     }
 }
 
-function initializeBillingTable(items = []) {
+function initializeBillingTable(items = [], bedHistory = []) {
     const tbody = document.getElementById('billing-items-body');
-    let html = BILLING_ITEMS_LIST.map((item, index) => `
+    let html = '';
+    let rowIndex = 1;
+
+    // Dynamically add bed history rows
+    if (bedHistory && bedHistory.length > 0) {
+        bedHistory.forEach((bed) => {
+            const startDate = new Date(bed.start_date);
+            const endDate = bed.end_date ? new Date(bed.end_date) : new Date();
+            
+            // Calculate days (minimum 1 day)
+            const diffTime = Math.abs(endDate - startDate);
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays < 1) diffDays = 1;
+
+            const itemName = `Bed Charge (${bed.ward_type} - ${bed.bed_no})`;
+            html += `
+            <tr class="billing-item-row" data-item-name="${itemName}">
+                <td style="text-align:center;">${rowIndex++}</td>
+                <td><strong>${itemName}</strong> <br><small style="color:#64748b; font-size:10px;">${startDate.toLocaleDateString()} to ${bed.end_date ? endDate.toLocaleDateString() : 'Present'}</small></td>
+                <td style="text-align:center;"><input type="number" class="calc-input fee-input" oninput="calculateBillingTotals()" value="${bed.daily_charge || 0}" placeholder="0" readonly style="background:#f1f5f9; cursor:not-allowed;"></td>
+                <td style="text-align:center;"><input type="number" class="calc-input days-input" oninput="calculateBillingTotals()" value="${diffDays}" placeholder="1" readonly style="background:#f1f5f9; cursor:not-allowed;"></td>
+                <td class="row-amt" style="text-align:right; font-weight:700;"></td>
+            </tr>
+            `;
+        });
+    }
+
+    // Add static items
+    html += BILLING_ITEMS_LIST.map((item) => `
         <tr class="billing-item-row" data-item-name="${item}">
-            <td style="text-align:center;">${index + 1}</td>
+            <td style="text-align:center;">${rowIndex++}</td>
             <td>${item}</td>
             <td style="text-align:center;"><input type="number" class="calc-input fee-input" oninput="calculateBillingTotals()" placeholder="0"></td>
             <td style="text-align:center;"><input type="number" class="calc-input days-input" oninput="calculateBillingTotals()" placeholder="1"></td>
             <td class="row-amt" style="text-align:right; font-weight:700;"></td>
         </tr>
     `).join('');
+
     tbody.innerHTML = html;
 }
 

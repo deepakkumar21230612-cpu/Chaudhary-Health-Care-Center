@@ -8,6 +8,14 @@ const surgerySchema = new mongoose.Schema({
     paid: { type: Boolean, default: false }
 });
 
+const bedHistorySchema = new mongoose.Schema({
+    ward_type: String,
+    bed_no: String,
+    daily_charge: { type: Number, default: 0 },
+    start_date: { type: Date, default: Date.now },
+    end_date: { type: Date, default: null }
+});
+
 const patientSchema = new mongoose.Schema({
     patient_id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -28,7 +36,7 @@ const patientSchema = new mongoose.Schema({
     wardChargePerDay: Number,
     doctorFees: Number,
     totalBill: Number,
-    bedHistory: [mongoose.Schema.Types.Mixed],
+    bedHistory: [bedHistorySchema],
     guardianSignature: { type: String, default: null },
     documents: [{ type: String }],
     isDeleted: { type: Boolean, default: false },

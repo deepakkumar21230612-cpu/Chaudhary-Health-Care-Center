@@ -60,11 +60,67 @@ exports.getPatientById = async (req, res) => {
     }
 };
 
+function getWardType(bedNo) {
+    if (!bedNo) return 'General';
+    if (bedNo.toUpperCase().includes('ICU')) return 'ICU';
+    if (bedNo.toUpperCase().includes('PRIVATE')) return 'Private';
+    return 'General';
+}
+
 exports.createPatient = async (req, res) => {
     try {
         const newPatient = new Patient(req.body);
+        
+        // Initialize bed history if a bed is assigned
+        if (newPatient.bed_no) {
+            newPatient.bedHistory = [{
+                ward_type: getWardType(newPatient.bed_no),
+                bed_no: newPatient.bed_no,
+                daily_charge: newPatient.wardChargePerDay || 0,
+                start_date: newPatient.admission_date || Date.now()
+            }];
+        }
+        
         await newPatient.save();
         res.status(201).json({ success: true, patient: newPatient });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.transferBed = async (req, res) => {
+    try {
+        const { new_bed_no, new_daily_charge, ward_type } = req.body;
+        const patient = await Patient.findOne({ patient_id: req.params.id, isDeleted: false });
+        if (!patient) return res.status(404).json({ success: false, message: 'Patient not found' });
+
+        // Close the current bed history period
+        if (patient.bedHistory && patient.bedHistory.length > 0) {
+            const lastBed = patient.bedHistory[patient.bedHistory.length - 1];
+            if (!lastBed.end_date) {
+                lastBed.end_date = Date.now();
+            }
+        }
+
+        // Determine new ward type
+        const newWardType = ward_type || getWardType(new_bed_no);
+
+        // Add new bed period
+        patient.bedHistory.push({
+            ward_type: newWardType,
+            bed_no: new_bed_no,
+            daily_charge: new_daily_charge || patient.wardChargePerDay || 0,
+            start_date: Date.now()
+        });
+
+        // Update current main bed info
+        patient.bed_no = new_bed_no;
+        if (new_daily_charge !== undefined) {
+            patient.wardChargePerDay = new_daily_charge;
+        }
+        
+        await patient.save();
+        res.status(200).json({ success: true, patient });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }

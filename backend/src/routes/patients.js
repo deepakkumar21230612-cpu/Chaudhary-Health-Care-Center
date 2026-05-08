@@ -17,6 +17,7 @@ router.post('/', authenticate, patientController.createPatient);
 // Parameterized routes (MUST be last to avoid catching named routes)
 router.get('/:id', authenticate, patientController.getPatientById);
 router.put('/:id', authenticate, patientController.updatePatient);
+router.put('/:id/transfer-bed', authenticate, patientController.transferBed);
 router.delete('/:id', authenticate, checkRole(['admin']), patientController.deletePatient);
 router.post('/:id/restore', authenticate, checkRole(['admin']), patientController.restorePatient);
 router.post('/:id/upload-files', authenticate, upload.array('files'), patientController.uploadPatientFiles);
