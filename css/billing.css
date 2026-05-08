@@ -495,21 +495,24 @@
 }
 
 .billing-table td {
-    padding: 6px 10px;
+    padding: 2px 5px;
     border-bottom: 1px solid #e2e8f0;
-    font-size: 12px;
+    font-size: 11px;
     color: #0f172a;
+    vertical-align: middle;
 }
 
 .calc-input {
     width: 100%;
-    padding: 4px;
+    padding: 1px;
+    height: 18px;
     border: 1px solid #cbd5e1;
-    border-radius: 4px;
+    border-radius: 2px;
     text-align: center;
     font-weight: 700;
     font-size: 11px;
     transition: var(--transition-smooth);
+    background: transparent;
 }
 .calc-input:focus {
     border-color: var(--bill-primary);
