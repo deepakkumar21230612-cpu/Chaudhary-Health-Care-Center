@@ -134,12 +134,36 @@ exports.transferBed = async (req, res) => {
 
 exports.updatePatient = async (req, res) => {
     try {
-        const patient = await Patient.findOneAndUpdate(
-            { patient_id: req.params.id, isDeleted: false },
-            req.body,
-            { new: true }
-        );
+        const patient = await Patient.findOne({ patient_id: req.params.id, isDeleted: false });
         if (!patient) return res.status(404).json({ success: false, message: 'Patient not found' });
+
+        const oldBedNo = patient.bed_no;
+        const newBedNo = req.body.bed_no;
+
+        if (newBedNo && newBedNo !== oldBedNo) {
+            // Bed has changed! Let's close the old stay and start a new stay.
+            if (!patient.bedHistory) {
+                patient.bedHistory = [];
+            }
+            if (patient.bedHistory.length > 0) {
+                const lastBed = patient.bedHistory[patient.bedHistory.length - 1];
+                if (!lastBed.end_date) {
+                    lastBed.end_date = Date.now();
+                }
+            }
+            // Add new stay
+            patient.bedHistory.push({
+                ward_type: getWardType(newBedNo),
+                bed_no: newBedNo,
+                daily_charge: req.body.wardChargePerDay || patient.wardChargePerDay || 0,
+                start_date: Date.now()
+            });
+        }
+
+        // Apply other updates
+        Object.assign(patient, req.body);
+        await patient.save();
+
         res.status(200).json({ success: true, patient });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

@@ -320,23 +320,55 @@ async function viewBill(patientId) {
         document.getElementById('b-doa').textContent = p?.admission_date || '-';
         document.getElementById('b-dod').textContent = p?.discharge_date || 'N/A';
         
+        // Auto-populate invoice date and time
+        const now = new Date();
+        document.getElementById('auto-date-field-bill').textContent = now.toLocaleDateString();
+        document.getElementById('auto-time-field-bill').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
         document.getElementById('discount-amt').value = currentBillData?.discount || 0;
         
-        initializeBillingTable(currentBillData?.items || [], patient.bedHistory || []);
+        initializeBillingTable(currentBillData?.items || [], p?.bedHistory || []);
         renderPaymentHistory(currentBillData?.payments || []);
         
+        // Calculate total admitted days
+        let totalAdmittedDays = 1;
+        if (p?.admission_date) {
+            const admissionDate = new Date(p.admission_date);
+            const dischargeDate = p.discharge_date ? new Date(p.discharge_date) : new Date();
+            const diffTime = Math.abs(dischargeDate - admissionDate);
+            totalAdmittedDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (totalAdmittedDays < 1) totalAdmittedDays = 1;
+        }
+
         // Populate inputs for saved items
         const rows = document.querySelectorAll('#billing-items-body tr');
         rows.forEach((row) => {
             const itemName = row.getAttribute('data-item-name');
             const savedItem = currentBillData?.items?.find(i => i.name === itemName);
             
-            // Only overwrite if it's a static item or we have specifically saved it manually
-            // Bed history rows have readonly inputs, but if they were saved, we can restore them if needed.
-            // For now, if it's a bed charge, we rely on the dynamic calculated values from initializeBillingTable.
-            if (savedItem && !itemName.startsWith('Bed Charge')) {
-                row.querySelector('.fee-input').value = savedItem.fee || '';
-                row.querySelector('.days-input').value = savedItem.days || '';
+            if (savedItem) {
+                // If previously saved, load exactly what was saved
+                row.querySelector('.fee-input').value = savedItem.fee !== undefined ? savedItem.fee : '';
+                row.querySelector('.days-input').value = savedItem.days !== undefined ? savedItem.days : '';
+                
+                // Fallback for consultation fee defaults if saved empty
+                if ((itemName === 'CONSULTATION FEE' || itemName === 'DR. FEES') && !savedItem.fee) {
+                    row.querySelector('.fee-input').value = p?.doctorFees || 500;
+                    row.querySelector('.days-input').value = 1;
+                }
+            } else {
+                // First-time load: no saved item exists yet
+                if (!itemName.startsWith('Bed Charge')) {
+                    // Populate total admitted days for static items
+                    row.querySelector('.days-input').value = totalAdmittedDays;
+
+                    // Auto-populate default consultation fee if it's DR. FEES or CONSULTATION FEE
+                    if (itemName === 'CONSULTATION FEE' || itemName === 'DR. FEES') {
+                        row.querySelector('.fee-input').value = p?.doctorFees || 500;
+                        row.querySelector('.days-input').value = 1;
+                    }
+                }
+                // For 'Bed Charge' items, initializeBillingTable has already populated the dynamic bed history stay values!
             }
         });
 
@@ -370,8 +402,8 @@ function initializeBillingTable(items = [], bedHistory = []) {
             <tr class="billing-item-row" data-item-name="${itemName}">
                 <td style="text-align:center;">${rowIndex++}</td>
                 <td><strong>${itemName}</strong> <br><small style="color:#64748b; font-size:10px;">${startDate.toLocaleDateString()} to ${bed.end_date ? endDate.toLocaleDateString() : 'Present'}</small></td>
-                <td style="text-align:center;"><input type="number" class="calc-input fee-input" oninput="calculateBillingTotals()" value="${bed.daily_charge || 0}" placeholder="0" readonly style="background:#f1f5f9; cursor:not-allowed;"></td>
-                <td style="text-align:center;"><input type="number" class="calc-input days-input" oninput="calculateBillingTotals()" value="${diffDays}" placeholder="1" readonly style="background:#f1f5f9; cursor:not-allowed;"></td>
+                <td style="text-align:center;"><input type="number" class="calc-input fee-input" oninput="calculateBillingTotals()" value="${bed.daily_charge || 0}" placeholder="0"></td>
+                <td style="text-align:center;"><input type="number" class="calc-input days-input" oninput="calculateBillingTotals()" value="${diffDays}" placeholder="1"></td>
                 <td class="row-amt" style="text-align:right; font-weight:700;"></td>
             </tr>
             `;

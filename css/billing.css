@@ -578,11 +578,50 @@
 
 /* Print Styles */
 @media print {
-    body { background: white; }
-    .billing-report-overlay { position: static; padding: 0; animation: none; }
-    .a4-bill-container { box-shadow: none; padding: 0; max-width: 100%; border: none; }
-    .report-actions-top, .report-type-badge, .no-print { display: none !important; }
-    .calc-input { border: none !important; padding: 0 !important; font-size: 13px !important; }
+    body { background: white !important; color: black !important; }
+    .sidebar, .mobile-header, .content-header, .sidebar-overlay, #loading-overlay, #notification {
+        display: none !important;
+    }
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+    }
+    #module-content > div:not(#module-billing) {
+        display: none !important;
+    }
+    .billing-container > *:not(#billing-report-wrap) {
+        display: none !important;
+    }
+    .billing-report-overlay {
+        position: static !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        backdrop-filter: none !important;
+        z-index: auto !important;
+        animation: none !important;
+    }
+    .a4-bill-container {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .report-actions-top, .report-type-badge, .no-print {
+        display: none !important;
+    }
+    .calc-input {
+        border: none !important;
+        padding: 0 !important;
+        font-size: 13px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
 }
 
 /* Responsive */

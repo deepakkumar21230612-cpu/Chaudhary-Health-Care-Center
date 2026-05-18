@@ -9,11 +9,20 @@ exports.createDischarge = async (req, res) => {
         const newDischarge = new Discharge(req.body);
         await newDischarge.save();
         
-        // Update patient status to Discharged
-        await Patient.findOneAndUpdate(
-            { patient_id: patientId },
-            { status: 'Discharged', discharge_date: dischargeDate }
-        );
+        // Update patient status to Discharged and close active bed history stay
+        const patient = await Patient.findOne({ patient_id: patientId });
+        if (patient) {
+            patient.status = 'Discharged';
+            patient.discharge_date = dischargeDate || Date.now();
+            
+            if (patient.bedHistory && patient.bedHistory.length > 0) {
+                const lastBed = patient.bedHistory[patient.bedHistory.length - 1];
+                if (!lastBed.end_date) {
+                    lastBed.end_date = dischargeDate || Date.now();
+                }
+            }
+            await patient.save();
+        }
         
         res.status(201).json({ success: true, discharge: newDischarge });
     } catch (error) {

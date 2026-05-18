@@ -141,21 +141,21 @@ function renderPatientsTable(patientsList) {
                 ${payStatus === 'Pending' && patient.pending_amount ?
                 `<br><span style="color:#e67e22;font-size:11px;">${window.currencySymbol || '₹'}${patient.pending_amount} pending</span>` : ''}
             </td>
-            <td>
-                <button class="btn-small btn-info" onclick="viewPatient('${patient.patient_id}')" title="View Info"><i class="fas fa-eye"></i></button>
+            <td class="action-buttons-cell">
+                <button class="action-btn-pro view-btn" onclick="viewPatient('${patient.patient_id}')" title="View Info"><i class="fas fa-eye"></i></button>
                 
                 ${(currentUser && (currentUser.role === 'admin' || currentUser.role === 'doctor')) ?
-                `<button class="btn-small btn-warning" onclick="editPatient('${patient.patient_id}')" title="Edit Patient"><i class="fas fa-edit"></i></button>` : ''}
+                `<button class="action-btn-pro edit-btn" onclick="editPatient('${patient.patient_id}')" title="Edit Patient"><i class="fas fa-edit"></i></button>` : ''}
                 
-                ${!isDischarged ? `<button class="btn-small" style="background:#4b5563; color:white; border:none;" onclick="openTransferBedModal('${patient.patient_id}')" title="Transfer Bed"><i class="fas fa-exchange-alt"></i></button>` : ''}
+                ${!isDischarged ? `<button class="action-btn-pro transfer-btn" onclick="openTransferBedModal('${patient.patient_id}')" title="Transfer Bed"><i class="fas fa-exchange-alt"></i></button>` : ''}
                 
                 ${(currentUser && currentUser.role === 'admin') ?
-                `<button class="btn-small btn-danger" onclick="deletePatient('${patient.patient_id}')" title="Delete Patient"><i class="fas fa-trash"></i></button>` : ''}
+                `<button class="action-btn-pro delete-btn" onclick="deletePatient('${patient.patient_id}')" title="Delete Patient"><i class="fas fa-trash"></i></button>` : ''}
                 
                 ${(currentUser && currentUser.role !== 'receptionist') ?
-                `<button class="btn-small btn-success" onclick="addNoteForPatient('${patient.patient_id}')" title="Daily Notes"><i class="fas fa-notes-medical"></i></button>` : ''}
+                `<button class="action-btn-pro notes-btn" onclick="addNoteForPatient('${patient.patient_id}')" title="Daily Notes"><i class="fas fa-notes-medical"></i></button>` : ''}
                 
-                <button class="btn-small btn-primary" style="background-color: #805ad5; border: none; color: white;" onclick="openSurgeryModal('${patient.patient_id}')" title="Add Surgery Event"><i class="fas fa-procedures"></i></button>
+                <button class="action-btn-pro surgery-btn" onclick="openSurgeryModal('${patient.patient_id}')" title="Add Surgery Event"><i class="fas fa-procedures"></i></button>
             </td>
         </tr>
     `;
@@ -342,6 +342,12 @@ function viewPatient(patientId) {
                                     <div>
                                         <div style="font-size: 14px; font-weight: 700; color: #2d3748;">${s.surgeryName}</div>
                                         <div style="font-size: 12px; color: #718096;">By ${s.surgeonName} on ${new Date(s.surgeryDate).toLocaleDateString()}</div>
+                                        ${s.guardianSignature ? `
+                                            <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px;">
+                                                <span style="font-size: 11px; color: #718096; font-weight: 600;">Guardian Signature Proof:</span>
+                                                <img src="${s.guardianSignature}" style="max-height: 40px; border: 1px solid #edf2f7; border-radius: 4px; padding: 2px; background: #fff;" alt="Sign Proof">
+                                            </div>
+                                        ` : ''}
                                     </div>
                                     <div style="text-align: right; color: #805ad5; font-weight: 700; font-size: 14px;">
                                         ${window.currencySymbol || '₹'}${s.cost}
@@ -444,7 +450,7 @@ function editPatient(patientId) {
                         <h4 style="margin: 0 0 10px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;">
                             <i class="fas fa-bed"></i> Change Ward / Bed
                         </h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                             <div>
                                 <label style="display:block; font-size:10px; color:#718096; margin-bottom:3px;">Ward Type</label>
                                 <select id="edit-p-ward-type" class="filter-select" style="width:100%; height: 35px;">
@@ -454,9 +460,13 @@ function editPatient(patientId) {
                             </div>
                             <div>
                                 <label style="display:block; font-size:10px; color:#718096; margin-bottom:3px;">Bed Number</label>
-                                <select id="edit-p-bed-no" class="filter-select" style="width:100%; height: 35px;">
+                                <select id="edit-p-bed-no" class="filter-select" style="width:100%; height: 35px;" onchange="handleEditBedChange(this.value)">
                                     <option value="${patient.bed_no || ''}">${patient.bed_no || 'Select Bed'}</option>
                                 </select>
+                            </div>
+                            <div>
+                                <label style="display:block; font-size:10px; color:#718096; margin-bottom:3px;">Daily Charge (${window.currencySymbol || '₹'})</label>
+                                <input type="number" id="edit-p-daily-charge" value="${patient.wardChargePerDay || 0}" class="search-input" style="width:100%; height: 35px; padding: 5px;">
                             </div>
                         </div>
                     </div>
@@ -505,7 +515,7 @@ function openTransferBedModal(patientId) {
 
                     <div style="margin-bottom: 15px;">
                         <label style="display:block; font-size:11px; font-weight:700; color:#a0aec0; text-transform:uppercase; margin-bottom:5px;">Select New Bed</label>
-                        <select id="transfer-new-bed" class="filter-select" style="width:100%; height: 35px;" required>
+                        <select id="transfer-new-bed" class="filter-select" style="width:100%; height: 35px;" required onchange="handleTransferBedChange(this.value)">
                             <option value="">Loading beds...</option>
                         </select>
                     </div>
@@ -576,6 +586,17 @@ function openTransferBedModal(patientId) {
     }).catch(err => console.error(err));
 }
 
+window.handleTransferBedChange = function(bedNo) {
+    if (!bedNo) return;
+    const settings = window.hospitalSettings || {};
+    const isICU = bedNo.toLowerCase().includes('icu');
+    const dailyCharge = isICU ? (parseFloat(settings['icu-charge']) || 5000) : (parseFloat(settings['ward-charge']) || 2000);
+    const chargeInput = document.getElementById('transfer-daily-charge');
+    if (chargeInput) {
+        chargeInput.value = dailyCharge;
+    }
+};
+
 async function saveTransferBed(patientId) {
     const newBed = document.getElementById('transfer-new-bed').value;
     const newCharge = parseFloat(document.getElementById('transfer-daily-charge').value) || 0;
@@ -616,6 +637,17 @@ async function saveTransferBed(patientId) {
         showNotification('Network error while transferring patient', 'error');
     }
 }
+
+window.handleEditBedChange = function(bedNo) {
+    if (!bedNo) return;
+    const settings = window.hospitalSettings || {};
+    const isICU = bedNo.toLowerCase().includes('icu');
+    const dailyCharge = isICU ? (parseFloat(settings['icu-charge']) || 5000) : (parseFloat(settings['ward-charge']) || 2000);
+    const chargeInput = document.getElementById('edit-p-daily-charge');
+    if (chargeInput) {
+        chargeInput.value = dailyCharge;
+    }
+};
 
 async function loadAvailableBedsForEdit(currentBed, gender) {
     const bedSelect = document.getElementById('edit-p-bed-no');
@@ -957,6 +989,22 @@ function isSurgeryPatient(patientId) {
     return patientObj && patientObj.surgeries && patientObj.surgeries.length > 0;
 }
 
+window.handleSurgerySignatureUpload = function(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgEl = document.getElementById('surgery-sig-preview-img');
+            const placeholder = document.getElementById('surgery-sig-placeholder');
+            if (imgEl && placeholder) {
+                imgEl.src = e.target.result;
+                imgEl.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
 function openSurgeryModal(patientId) {
     const patientObj = window.allPatientsData?.find(p => String(p.patient_id) === String(patientId));
 
@@ -985,10 +1033,20 @@ function openSurgeryModal(patientId) {
                     <label>Surgery Date *</label>
                     <input type="date" id="surgery-date" value="${new Date().toISOString().split('T')[0]}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
                 </div>
-                <div class="form-group" style="margin-bottom: 25px;">
+                <div class="form-group" style="margin-bottom: 15px;">
                     <label>Surgery Base Charges (${window.currencySymbol || '₹'}) *</label>
                     <input type="number" id="surgery-cost" placeholder="Enter amount" min="0" onfocus="this.select()" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px;">
                     <small style="color:#718096; display:block; margin-top:5px;"><i class="fas fa-info-circle"></i> This will be automatically added to the Billing Module.</small>
+                </div>
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label>Upload Guardian Signature / Thumb Proof *</label>
+                    <div style="border: 1px dashed #ccc; padding: 10px; border-radius: 8px; text-align: center; background: #f9f9f9; margin-bottom: 10px;">
+                        <input type="file" id="surgery-sig-upload" accept="image/*" onchange="handleSurgerySignatureUpload(this)" style="font-size: 12px; width: 100%;">
+                    </div>
+                    <div id="surgery-sig-preview-wrap" style="height: 100px; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #fff; overflow: hidden; position: relative;">
+                        <img id="surgery-sig-preview-img" style="max-height: 100%; display: none;">
+                        <span id="surgery-sig-placeholder" style="color: #cbd5e1; font-style: italic; font-size: 13px;">Signature Preview / अंगूठे का निशान</span>
+                    </div>
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button class="btn" style="background:#eee;color:#333;border:none;padding:10px 20px;border-radius:5px;cursor:pointer;" onclick="this.closest('.modal').remove()">Cancel</button>
@@ -1006,6 +1064,7 @@ async function saveSurgery(patientId, btnEl) {
     const surgeon = document.getElementById('surgeon-name').value.trim();
     const date = document.getElementById('surgery-date').value;
     const cost = parseFloat(document.getElementById('surgery-cost').value) || 0;
+    const signature = document.getElementById('surgery-sig-preview-img')?.src || '';
 
     if (!name || !surgeon || !date) {
         showNotification('Please provide mandatory details (Name, Surgeon, Date).', 'error');
@@ -1018,6 +1077,7 @@ async function saveSurgery(patientId, btnEl) {
         surgeonName: surgeon,
         surgeryDate: date,
         cost: cost,
+        guardianSignature: signature,
         paid: false
     };
 
@@ -1084,14 +1144,12 @@ async function savePatientEdit(patientId) {
     const wardType = document.getElementById('edit-p-ward-type').value;
     const bedNo = document.getElementById('edit-p-bed-no').value.trim();
 
-    if (!name) {
-        showNotification('Patient name is required.', 'error');
-        return;
-    }
+    const dailyCharge = parseFloat(document.getElementById('edit-p-daily-charge')?.value) || 0;
 
     const editData = {
         name, guardian_name: guardian, age: parseInt(age),
-        gender, mobile, address, bed_no: bedNo
+        gender, mobile, address, bed_no: bedNo,
+        wardChargePerDay: dailyCharge
     };
 
     showLoading('Saving changes...');

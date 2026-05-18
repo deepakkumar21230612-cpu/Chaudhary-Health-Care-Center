@@ -157,6 +157,136 @@ function renderPatientRecord() {
                             <div style="margin-bottom: 8px;">स्थान: <input type="text" id="rec-rel-place" style="border:none; border-bottom: 1px dotted #000; width: 80%; outline:none;"></div>
                         </div>
                     </div>
+
+                    <!-- Patient Complete Journey Log (A4 Printable Sections) -->
+                    <div id="patient-journey-log" style="margin-top: 50px; border-top: 3px double #2b6cb0; padding-top: 30px;">
+                        <h2 style="text-align: center; color: #2b6cb0; font-family: serif; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; font-size: 20px;">
+                            Patient Complete Medical Journey & Case History
+                        </h2>
+                        
+                        <!-- 1. Ward & Bed Stay timeline -->
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-bed"></i> 1. Ward & Bed Stay Timeline</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">Ward Type</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">Bed No.</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">From Date</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">To Date</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1; text-align: right;">Rate / Day</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journey-bed-history">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 2. Surgery History -->
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-procedures"></i> 2. Surgeries & Interventions</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">Surgery/Procedure</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">Surgeon</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1;">Date</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1; text-align: right;">Charges</th>
+                                        <th style="padding: 6px; border: 1px solid #cbd5e1; text-align: center;">Guardian Proof</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journey-surgery-history">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 3. Daily observations (Vitals) -->
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-heartbeat"></i> 3. Clinical Observation Chart (Vitals Log)</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                                <thead>
+                                    <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Date & Time</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Pulse</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">BP</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Temp</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">SpO2</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">RBS</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Observer</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journey-vitals-history">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 4. Medication Chart -->
+                        <div style="margin-bottom: 25px;">
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-pills"></i> 4. Medication & Treatment Logs</h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                                <thead>
+                                    <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Prescribed</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Medicine Name</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Type & Dose</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Status</th>
+                                        <th style="padding: 5px; border: 1px solid #cbd5e1;">Administered Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="journey-meds-history">
+                                    <!-- Dynamic -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 5. Final billing & Payments summary -->
+                        <div>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-file-invoice-dollar"></i> 5. Final Billing & Financial Ledger</h4>
+                            <div style="display: flex; justify-content: space-between; gap: 20px; font-size: 12px; align-items: flex-start;">
+                                <div style="flex: 1.2;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size:11px;">
+                                        <thead>
+                                            <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left;">
+                                                <th style="padding: 5px;">Payment Date</th>
+                                                <th style="padding: 5px;">Mode</th>
+                                                <th style="padding: 5px; text-align: right;">Amount Paid</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="journey-financial-history">
+                                            <!-- Dynamic -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="flex: 0.8; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px;">
+                                    <table style="width: 100%; line-height: 1.6;">
+                                        <tr>
+                                            <td><strong>Total Bill:</strong></td>
+                                            <td style="text-align: right;" id="j-total-bill">₹0</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Discount:</strong></td>
+                                            <td style="text-align: right; color: #ef4444;" id="j-discount">₹0</td>
+                                        </tr>
+                                        <tr style="border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; font-weight: bold;">
+                                            <td><strong>Net Payable:</strong></td>
+                                            <td style="text-align: right;" id="j-net-payable">₹0</td>
+                                        </tr>
+                                        <tr style="font-weight: bold; color: #10b981;">
+                                            <td><strong>Total Paid:</strong></td>
+                                            <td style="text-align: right;" id="j-total-paid">₹0</td>
+                                        </tr>
+                                        <tr style="border-top: 2px double #cbd5e1; font-weight: 900; color: #ef4444; font-size: 13px;">
+                                            <td><strong>Balance Due:</strong></td>
+                                            <td style="text-align: right;" id="j-balance-due">₹0</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -183,12 +313,11 @@ function renderPatientRecord() {
                 font-family: serif;
             }
             @media print {
-                .no-print { display: none !important; }
-                .main-content { margin: 0 !important; padding: 0 !important; }
-                .sidebar, .content-header { display: none !important; }
-                .a4-container { box-shadow: none; padding: 0; }
+                .no-print, .sidebar, .mobile-header, .content-header, #patient-record-controls, .sidebar-overlay, #loading-overlay, #notification { display: none !important; }
+                .main-content { margin: 0 !important; padding: 0 !important; width: 100% !important; box-shadow: none !important; }
+                .a4-container { box-shadow: none; padding: 0; width: 100% !important; max-width: 100% !important; }
                 .record-paper { width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; }
-                body { background: white; }
+                body { background: white !important; color: black !important; }
                 input[type="date"]::-webkit-inner-spin-button,
                 input[type="date"]::-webkit-calendar-picker-indicator {
                     display: none;
@@ -361,6 +490,8 @@ function loadPatientToRecord(patientId) {
         document.getElementById('sig-preview-img').style.display = 'none';
         document.getElementById('sig-placeholder').style.display = 'block';
     }
+
+    populatePatientJourney(currentRecordPatientId, p);
 }
 
 function handleSignatureUpload(input) {
@@ -418,6 +549,195 @@ function toggleRadioDeSelection(radio) {
         const name = radio.name;
         document.querySelectorAll('input[name="' + name + '"]').forEach(r => r.wasChecked = false);
         radio.wasChecked = true;
+    }
+}
+
+async function populatePatientJourney(patientId, p) {
+    // 1. Bed Stay history
+    const bedHistoryTbody = document.getElementById('journey-bed-history');
+    if (bedHistoryTbody) {
+        if (p && p.bedHistory && p.bedHistory.length > 0) {
+            bedHistoryTbody.innerHTML = p.bedHistory.map(b => {
+                const start = b.start_date ? new Date(b.start_date).toLocaleDateString() : '-';
+                const end = b.end_date ? new Date(b.end_date).toLocaleDateString() : 'Present';
+                return `
+                    <tr>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${b.ward_type}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${b.bed_no}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${start}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${end}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1; text-align:right;">₹${b.daily_charge || 0}</td>
+                    </tr>
+                `;
+            }).join('');
+        } else if (p) {
+            // Render at least current admission bed stay
+            const currentCharge = p.daily_charges || p.dailyCharge || 0;
+            const start = p.admission_date ? new Date(p.admission_date).toLocaleDateString() : '-';
+            bedHistoryTbody.innerHTML = `
+                <tr>
+                    <td style="padding:6px; border:1px solid #cbd5e1;">${p.ward_type || 'General Ward'}</td>
+                    <td style="padding:6px; border:1px solid #cbd5e1;">${p.bed_no || '-'}</td>
+                    <td style="padding:6px; border:1px solid #cbd5e1;">${start}</td>
+                    <td style="padding:6px; border:1px solid #cbd5e1;">Present</td>
+                    <td style="padding:6px; border:1px solid #cbd5e1; text-align:right;">₹${currentCharge}</td>
+                </tr>
+            `;
+        } else {
+            bedHistoryTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px; color:#cbd5e1;">No Bed Stay History found.</td></tr>`;
+        }
+    }
+
+    // 2. Surgeries
+    const surgeryHistoryTbody = document.getElementById('journey-surgery-history');
+    if (surgeryHistoryTbody) {
+        if (p && p.surgeries && p.surgeries.length > 0) {
+            surgeryHistoryTbody.innerHTML = p.surgeries.map(s => {
+                const date = s.surgeryDate ? new Date(s.surgeryDate).toLocaleDateString() : '-';
+                const imgProof = s.guardianSignature 
+                    ? `<img src="${s.guardianSignature}" style="max-height: 35px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; background: #fff;" alt="Sign Proof">`
+                    : '<span style="color:#cbd5e1; font-style:italic;">No Proof</span>';
+                return `
+                    <tr>
+                        <td style="padding:6px; border:1px solid #cbd5e1; font-weight:bold;">${s.surgeryName}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${s.surgeonName}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1;">${date}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1; text-align:right;">₹${s.cost || 0}</td>
+                        <td style="padding:6px; border:1px solid #cbd5e1; text-align:center;">${imgProof}</td>
+                    </tr>
+                `;
+            }).join('');
+        } else {
+            surgeryHistoryTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px; color:#cbd5e1;">No surgical procedures recorded.</td></tr>`;
+        }
+    }
+
+    // 3. Vitals & Medications from Daily Notes API
+    try {
+        const response = await fetch(`${API_BASE}notes/${patientId}`, {
+            headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
+        });
+        const result = await response.json();
+        if (result.success) {
+            const vitals = result.notes.filter(n => n.type === 'vitals');
+            const meds = result.notes.filter(n => n.type === 'medication');
+
+            // Vitals
+            const vitalsTbody = document.getElementById('journey-vitals-history');
+            if (vitalsTbody) {
+                if (vitals.length > 0) {
+                    vitals.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+                    vitalsTbody.innerHTML = vitals.map(v => `
+                        <tr>
+                            <td style="padding:5px; border:1px solid #cbd5e1;">${v.date} ${v.time}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1; font-weight:bold;">${v.pulse || '-'}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1;">${v.bp || '-'}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1;">${v.temp || '-'}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1;">${v.spo2 || '-'}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1;">${v.rbs || '-'}</td>
+                            <td style="padding:5px; border:1px solid #cbd5e1; color:#4a5568;">${v.addedBy}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    vitalsTbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:10px; color:#cbd5e1;">No clinical observations charted.</td></tr>`;
+                }
+            }
+
+            // Medications
+            const medsTbody = document.getElementById('journey-meds-history');
+            if (medsTbody) {
+                if (meds.length > 0) {
+                    meds.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+                    medsTbody.innerHTML = meds.map(m => {
+                        const isGiven = m.status !== 'Pending';
+                        const statusText = isGiven 
+                            ? `<span style="color:#10b981; font-weight:bold;"><i class="fas fa-check-double"></i> Given</span>`
+                            : `<span style="color:#f59e0b; font-weight:bold;"><i class="fas fa-clock"></i> Scheduled</span>`;
+                        const doneDetails = isGiven
+                            ? `${m.doneBy} on ${m.doneTime}`
+                            : '-';
+                        return `
+                            <tr>
+                                <td style="padding:5px; border:1px solid #cbd5e1;">${m.date} ${m.time}</td>
+                                <td style="padding:5px; border:1px solid #cbd5e1; font-weight:bold;">${m.drugName}</td>
+                                <td style="padding:5px; border:1px solid #cbd5e1;">${m.medType || 'Medicine'} (${m.dose})</td>
+                                <td style="padding:5px; border:1px solid #cbd5e1;">${statusText}</td>
+                                <td style="padding:5px; border:1px solid #cbd5e1; font-size:10px; color:#4a5568;">${doneDetails}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    medsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:10px; color:#cbd5e1;">No medications prescribed.</td></tr>`;
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Error populating clinical journey history:", err);
+    }
+
+    // 4. Billings & Financial ledger
+    try {
+        const billingRes = await fetch(`${API_BASE}billing`, {
+            headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
+        });
+        const bResult = await billingRes.json();
+        if (bResult.success) {
+            const patientBill = bResult.billings.find(b => b.patient_id === patientId);
+            if (patientBill) {
+                // Payments
+                const ledgerTbody = document.getElementById('journey-financial-history');
+                if (ledgerTbody) {
+                    if (patientBill.payments && patientBill.payments.length > 0) {
+                        ledgerTbody.innerHTML = patientBill.payments.map(pay => `
+                            <tr>
+                                <td style="padding:5px; border-bottom: 1px solid #e2e8f0;">${pay.date}</td>
+                                <td style="padding:5px; border-bottom: 1px solid #e2e8f0; font-weight:bold;">${pay.mode}</td>
+                                <td style="padding:5px; border-bottom: 1px solid #e2e8f0; text-align:right; font-weight:bold; color:#10b981;">₹${pay.amount}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        ledgerTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px; color:#cbd5e1;">No payments received yet.</td></tr>`;
+                    }
+                }
+
+                // Billing totals
+                const disc = parseFloat(patientBill.discount) || 0;
+                const totalPaid = (patientBill.payments || []).reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
+                const grandTotal = parseFloat(patientBill.grandTotal) || (p ? p.totalBill : 0) || 0;
+                const netPayable = grandTotal - disc;
+                const balDue = netPayable - totalPaid;
+
+                document.getElementById('j-total-bill').textContent = `₹${grandTotal}`;
+                document.getElementById('j-discount').textContent = `₹${disc}`;
+                document.getElementById('j-net-payable').textContent = `₹${netPayable}`;
+                document.getElementById('j-total-paid').textContent = `₹${totalPaid}`;
+                
+                const balDueEl = document.getElementById('j-balance-due');
+                balDueEl.textContent = `₹${balDue}`;
+                if (balDue > 0) {
+                    balDueEl.style.color = '#ef4444';
+                } else {
+                    balDueEl.style.color = '#10b981';
+                }
+            } else {
+                // Fallback if no bill exists
+                const grandTotal = (p ? p.totalBill : 0) || 0;
+                const totalPaid = (p ? p.paid_amount : 0) || 0;
+                const balDue = (p ? p.pending_amount : 0) || 0;
+                document.getElementById('j-total-bill').textContent = `₹${grandTotal}`;
+                document.getElementById('j-discount').textContent = `₹0`;
+                document.getElementById('j-net-payable').textContent = `₹${grandTotal}`;
+                document.getElementById('j-total-paid').textContent = `₹${totalPaid}`;
+                document.getElementById('j-balance-due').textContent = `₹${balDue}`;
+                
+                const ledgerTbody = document.getElementById('journey-financial-history');
+                if (ledgerTbody) {
+                    ledgerTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px; color:#cbd5e1;">No financial ledger recorded in Billing.</td></tr>`;
+                }
+            }
+        }
+    } catch (err) {
+        console.error("Error populating billing journey history:", err);
     }
 }
 
