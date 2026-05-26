@@ -5,10 +5,10 @@ exports.signup = async (req, res) => {
     try {
         const { name, email, mobile, username, password, role, status: requestedStatus } = req.body;
 
-        // Check if user exists
-        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        // Check if user exists by email
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ success: false, message: 'User already exists' });
+            return res.status(400).json({ success: false, message: 'This email is already registered.' });
         }
 
         // Check if this is the first user or if request is from an admin
@@ -38,7 +38,9 @@ exports.signup = async (req, res) => {
             }
         }
 
-        const newUser = new User({ name, email, mobile, username, password, role: finalRole, status });
+        // Auto-generate username from email if not provided
+        const finalUsername = username || email.split('@')[0];
+        const newUser = new User({ name, email, mobile, username: finalUsername, password, role: finalRole, status });
         await newUser.save();
 
         res.status(201).json({
@@ -52,8 +54,8 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
 
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -73,7 +75,7 @@ exports.login = async (req, res) => {
             success: true,
             token,
             user_id: user._id,
-            username: user.username,
+            username: user.username || user.email.split('@')[0],
             name: user.name,
             role: user.role,
             email: user.email,
@@ -130,12 +132,17 @@ exports.updateUser = async (req, res) => {
                 try {
                     const cloudRes = await uploadToCloudinary(req.file.buffer, 'hms/avatars');
                     updateData.avatar = cloudRes.secure_url;
+                    console.log('✅ Avatar uploaded to Cloudinary:', cloudRes.secure_url);
                 } catch (cloudinaryErr) {
-                    console.error('Cloudinary avatar upload error, falling back to local file:', cloudinaryErr.message);
-                    updateData.avatar = `/uploads/avatars/${req.file.filename}`;
+                    console.error('❌ Cloudinary avatar upload error:', cloudinaryErr.message);
+                    // Fallback: store as base64 data URI in database
+                    const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+                    updateData.avatar = base64;
                 }
             } else {
-                updateData.avatar = `/uploads/avatars/${req.file.filename}`;
+                // No Cloudinary configured: store as base64 data URI
+                const base64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+                updateData.avatar = base64;
             }
         }
 
@@ -183,24 +190,16 @@ exports.forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 600000; // Valid for 10 minutes
         await user.save();
 
-        const { sendOtpEmail } = require('../config/emailService');
+        // Respond IMMEDIATELY to user — don't wait for email delivery
+        res.status(200).json({ success: true, message: 'OTP has been sent to your email.' });
 
-        try {
-            await sendOtpEmail(email, otp, user.name);
-            res.status(200).json({ success: true, message: 'OTP has been sent to your email.' });
-        } catch (mailError) {
-            console.error('Mail Sending Failed:', mailError);
-            // Development Fallback: If mail fails, tell the user the OTP (for testing only)
-            if (process.env.NODE_ENV === 'development' || !process.env.EMAIL_PASS || process.env.EMAIL_PASS === 'your_app_password_here') {
-                res.status(200).json({ 
-                    success: true, 
-                    message: 'Email service not configured. [DEBUG MODE] Your OTP is: ' + otp,
-                    debugOtp: otp 
-                });
-            } else {
-                throw mailError;
-            }
-        }
+        // Send email in background (non-blocking)
+        const { sendOtpEmail } = require('../config/emailService');
+        sendOtpEmail(email, otp, user.name).then(() => {
+            console.log(`✅ OTP email sent successfully to ${email}`);
+        }).catch((mailError) => {
+            console.error(`❌ Failed to send OTP email to ${email}:`, mailError.message);
+        });
 
     } catch (error) {
         console.error('Forgot Password Error:', error);

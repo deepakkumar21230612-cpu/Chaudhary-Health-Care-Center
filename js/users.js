@@ -15,11 +15,11 @@ function renderUsers() {
                     <h2>User Management Panel</h2>
                     <div class="users-stats" id="users-stats-display">
                         <div class="stat-item">
-                            <i class="fas fa-users"></i>
+                            <i class="bi bi-people"></i>
                             Total Users: <strong id="total-users-count">0</strong>
                         </div>
                         <div class="stat-item pending" id="pending-stat-item" style="display:none;">
-                            <i class="fas fa-clock"></i>
+                            <i class="bi bi-clock"></i>
                             Pending Approvals: <strong id="pending-users-count">0</strong>
                         </div>
                     </div>
@@ -27,8 +27,8 @@ function renderUsers() {
                 
                 <div class="users-controls">
                     <div class="search-wrapper">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchUserInput" class="users-search" placeholder="Search by name, email or username..." onkeyup="filterUsers()">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchUserInput" class="users-search" placeholder="Search by name or email..." onkeyup="filterUsers()">
                     </div>
                     <select id="filterUserStatus" class="users-filter" onchange="filterUsers()">
                         <option value="all">All Statuses</option>
@@ -37,7 +37,7 @@ function renderUsers() {
                         <option value="rejected">Rejected Only</option>
                     </select>
                     <button class="btn-add-user" onclick="openUserModal()">
-                        <i class="fas fa-plus"></i> Add New User
+                        <i class="bi bi-plus-lg"></i> Add New User
                     </button>
                 </div>
 
@@ -46,7 +46,7 @@ function renderUsers() {
                         <thead>
                             <tr>
                                 <th>User Profile</th>
-                                <th>Username</th>
+                                <th>Email</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -85,15 +85,9 @@ function renderUsers() {
                                     <input type="text" id="userMobile" placeholder="Enter 10-digit mobile number">
                                 </div>
                             </div>
-                            <div class="form-grid-2">
-                                <div class="form-group">
-                                    <label>Username *</label>
-                                    <input type="text" id="userUsername" required placeholder="Choose a unique username">
-                                </div>
-                                <div class="form-group" id="passGroup">
-                                    <label>Password *</label>
-                                    <input type="password" id="userPassword" placeholder="Minimum 6 characters">
-                                </div>
+                            <div class="form-group" id="passGroup">
+                                <label>Password *</label>
+                                <input type="password" id="userPassword" placeholder="Minimum 6 characters">
                             </div>
                             <div class="form-grid-2">
                                 <div class="form-group">
@@ -169,7 +163,6 @@ function displayUsers() {
 
     localUsers.forEach(user => {
         const matchesSearch = user.name.toLowerCase().includes(search) || 
-                             user.username.toLowerCase().includes(search) ||
                              (user.email && user.email.toLowerCase().includes(search));
         const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
 
@@ -180,7 +173,7 @@ function displayUsers() {
             const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
             
             // Check if this is the current logged in user
-            const isMe = window.currentUser && window.currentUser.username === user.username;
+            const isMe = window.currentUser && window.currentUser.email === user.email;
             const youTag = isMe ? `<span class="badge-you" style="margin-left: 5px;">(You)</span>` : '';
 
             // Approval Buttons for pending users
@@ -188,35 +181,47 @@ function displayUsers() {
             if (user.status === 'pending' && !isMe) {
                 actionButtons = `
                     <button class="btn-icon approve" title="Approve User" onclick="quickUpdateStatus('${user._id}', 'active')">
-                        <i class="fas fa-check"></i>
+                        <i class="bi bi-check-lg"></i>
                     </button>
                     <button class="btn-icon reject" title="Reject User" onclick="quickUpdateStatus('${user._id}', 'rejected')">
-                        <i class="fas fa-times"></i>
+                        <i class="bi bi-x-lg"></i>
                     </button>
                 `;
+            }
+
+            // Avatar: show image if available, otherwise initials
+            let avatarHtml = '';
+            if (user.avatar) {
+                const baseUrl = (window.API_BASE || '/api/').replace('/api/', '');
+                const avatarUrl = user.avatar.startsWith('http') || user.avatar.startsWith('data:') ? user.avatar : `${baseUrl}${user.avatar}`;
+                avatarHtml = `<div class="user-avatar-circle" style="overflow:hidden; cursor:pointer;" onclick="event.stopPropagation(); openLightbox('${avatarUrl.replace(/'/g, "\\'")}', '${user.name.replace(/'/g, "\\'")}')">
+                    <img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${user.name}">
+                </div>`;
+            } else {
+                avatarHtml = `<div class="user-avatar-circle">${initials}</div>`;
             }
 
             tr.innerHTML = `
                 <td>
                     <div class="user-main-info">
-                        <div class="user-avatar-circle">${initials}</div>
+                        ${avatarHtml}
                         <div class="user-name-box">
                             <div class="user-full-name">${user.name} ${youTag}</div>
-                            <div class="user-sub-info"><i class="far fa-envelope"></i> ${user.email || 'No email'}</div>
+                            <div class="user-sub-info"><i class="bi bi-envelope"></i> ${user.email || 'No email'}</div>
                         </div>
                     </div>
                 </td>
-                <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px;">@${user.username}</code></td>
+                <td><code style="background:#f1f5f9; padding:2px 6px; border-radius:4px;">${user.email || 'N/A'}</code></td>
                 <td><span class="role-pill role-${user.role}">${user.role.toUpperCase()}</span></td>
                 <td><span class="status-badge status-${user.status}">${user.status.charAt(0).toUpperCase() + user.status.slice(1)}</span></td>
                 <td>
                     <div class="action-buttons">
                         ${actionButtons}
                         <button class="btn-icon" title="Edit User" onclick="editUser('${user._id}')">
-                            <i class="fas fa-pen"></i>
+                            <i class="bi bi-pencil"></i>
                         </button>
                         <button class="btn-icon delete" title="Delete User" onclick="deleteUser('${user._id}')" ${isMe ? 'disabled' : ''}>
-                            <i class="fas fa-trash-alt"></i>
+                            <i class="bi bi-trash"></i>
                         </button>
                     </div>
                 </td>
@@ -262,7 +267,6 @@ function editUser(id) {
     document.getElementById('userName').value = user.name;
     document.getElementById('userEmail').value = user.email || '';
     document.getElementById('userMobile').value = user.mobile || '';
-    document.getElementById('userUsername').value = user.username;
 
     document.getElementById('userPassword').required = false;
     document.getElementById('userPassword').value = '';
@@ -308,12 +312,11 @@ async function saveUser(e) {
     const name = document.getElementById('userName').value.trim();
     const email = document.getElementById('userEmail').value.trim();
     const mobile = document.getElementById('userMobile').value.trim();
-    const username = document.getElementById('userUsername').value.trim();
     const password = document.getElementById('userPassword').value;
     const role = document.getElementById('userRole').value;
     const status = document.getElementById('userStatus').value;
 
-    const userData = { name, email, mobile, username, role, status };
+    const userData = { name, email, mobile, role, status };
     if (password) userData.password = password;
 
     showLoading('Saving changes...');

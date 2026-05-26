@@ -11,7 +11,7 @@ function renderDischarge() {
             <div class="module-header" id="discharge-header-nav">
                 <h2>Patient Discharge</h2>
                 <button class="btn" onclick="showModule('patients')">
-                    <i class="fas fa-arrow-left"></i> Back to Patients
+                    <i class="bi bi-arrow-left"></i> Back to Patients
                 </button>
             </div>
             
@@ -70,9 +70,9 @@ function renderDischarge() {
                 
                 <div class="adv-med-section">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <label style="margin:0; font-size:14px; font-weight:800; color:#4a5568;"><i class="fas fa-pills"></i> Advised Medicines</label>
+                        <label style="margin:0; font-size:14px; font-weight:800; color:#4a5568;"><i class="bi bi-capsule"></i> Advised Medicines</label>
                         <button type="button" class="btn btn-primary btn-small" onclick="addMedicineRow()">
-                            <i class="fas fa-plus"></i> Add Row
+                            <i class="bi bi-plus-lg"></i> Add Row
                         </button>
                     </div>
                     <div style="overflow-x:auto;">
@@ -95,7 +95,7 @@ function renderDischarge() {
                 
                 <div class="form-actions">
                     <button class="btn-success" onclick="confirmDischarge()">
-                        <i class="fas fa-check"></i> Generate Discharge Summary
+                        <i class="bi bi-check-lg"></i> Generate Discharge Summary
                     </button>
                 </div>
             </div>
@@ -103,10 +103,10 @@ function renderDischarge() {
             <div id="discharge-report-section" style="display:none;">
                 <div class="action-buttons print-hide" style="margin-bottom:15px; display:flex; justify-content:flex-end; gap:10px;">
                     <button class="btn btn-print" onclick="window.print()" style="background:#4CAF50; color:white;">
-                        <i class="fas fa-print"></i> Print Report
+                        <i class="bi bi-printer"></i> Print Report
                     </button>
                     <button class="btn btn-close" onclick="closeDischargeReport()" style="background:#6c757d; color:white;">
-                        <i class="fas fa-times"></i> Close
+                        <i class="bi bi-x-lg"></i> Close
                     </button>
                 </div>
                 
@@ -277,7 +277,7 @@ function addMedicineRow() {
         <td><input type="text" class="med-dose" placeholder="E.g. 1 Tab"></td>
         <td><input type="text" class="med-freq" placeholder="E.g. BD (Twice/day)"></td>
         <td><input type="text" class="med-dur" placeholder="E.g. 5 Days"></td>
-        <td style="text-align:center;"><button type="button" class="btn btn-danger btn-small" onclick="this.closest('tr').remove()" style="padding:6px 10px; background:#e53e3e; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="fas fa-times"></i></button></td>
+        <td style="text-align:center;"><button type="button" class="btn btn-danger btn-small" onclick="this.closest('tr').remove()" style="padding:6px 10px; background:#e53e3e; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;"><i class="bi bi-x-lg"></i></button></td>
     `;
     tbody.appendChild(tr);
 }

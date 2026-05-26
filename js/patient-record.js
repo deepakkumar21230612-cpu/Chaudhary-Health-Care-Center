@@ -18,7 +18,7 @@ function fmtTime(val) {
         const [h, m] = val.split(':').map(Number);
         const ampm = h >= 12 ? 'PM' : 'AM';
         const hour = h % 12 || 12;
-        return `${String(hour).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
+        return `${String(hour).padStart(2,'0')}:${String(m).padStart(2,'0')} ${ampm}`;
     }
     try {
         const d = new Date(val);
@@ -36,12 +36,12 @@ function renderPatientRecord() {
     moduleEl.innerHTML = `
         <div class="patient-record-layout">
             <div class="module-header no-print" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px; border-bottom: 2px solid var(--border); padding-bottom: 15px;">
-                <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;"><i class="fas fa-file-medical" style="color: var(--primary);"></i> In-Patient Record Registry</h2>
+                <h2 style="margin: 0; font-size: 28px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;"><i class="bi bi-file-earmark-medical" style="color: var(--primary);"></i> In-Patient Record Registry</h2>
                 <p style="margin: 0; color: var(--text-muted); font-size: 12px; font-weight: 500;">Search and view patient medical history, admission vitals, medications, and final billing records</p>
             </div>
 
             <div class="search-section no-print" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <h3 style="margin-top:0;"><i class="fas fa-search"></i> Select Patient for Case Record</h3>
+                <h3 style="margin-top:0;"><i class="bi bi-search"></i> Select Patient for Case Record</h3>
                 <div style="position:relative; display:flex; gap:10px;">
                     <input type="text" id="record-patient-search" class="search-input" placeholder="Search by ID or Name..." style="flex:1; padding:12px; border-radius:8px; border:2px solid #e2e8f0; font-size:15px;" oninput="filterRecordPatients(this.value)" onclick="filterRecordPatients(this.value)">
                     <div id="record-search-results" class="autocomplete-dropdown" style="display:none; position:absolute; top:100%; left:0; right:0; z-index:1000; background:white; border:1px solid #ddd; border-radius:8px; box-shadow:0 10px 25px rgba(0,0,0,0.1); margin-top:5px; max-height:300px; overflow-y:auto;"></div>
@@ -49,7 +49,7 @@ function renderPatientRecord() {
             </div>
 
             <div id="patient-record-controls" class="no-print" style="display:none; margin-bottom:15px; display:flex; justify-content:flex-end; gap:10px;">
-                <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print Record</button>
+                <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Record</button>
             </div>
 
             <div id="record-form-container" class="a4-container" style="display:none;">
@@ -188,7 +188,7 @@ function renderPatientRecord() {
                         
                         <!-- 1. Ward & Bed Stay timeline -->
                         <div style="margin-bottom: 25px;">
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-bed"></i> 1. Ward & Bed Stay Timeline</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-bed"></i> 1. Ward & Bed Stay Timeline</h4>
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                 <thead>
                                     <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
@@ -207,7 +207,7 @@ function renderPatientRecord() {
 
                         <!-- 2. Surgery History -->
                         <div style="margin-bottom: 25px;">
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-procedures"></i> 2. Surgeries & Interventions</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-hospital"></i> 2. Surgeries & Interventions</h4>
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                 <thead>
                                     <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
@@ -226,7 +226,7 @@ function renderPatientRecord() {
 
                         <!-- 3. Daily observations (Vitals) -->
                         <div style="margin-bottom: 25px;">
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-heartbeat"></i> 3. Clinical Observation Chart (Vitals Log)</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-activity"></i> 3. Clinical Observation Chart (Vitals Log)</h4>
                             <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                                 <thead>
                                     <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
@@ -247,7 +247,7 @@ function renderPatientRecord() {
 
                         <!-- 4. Medication Chart -->
                         <div style="margin-bottom: 25px;">
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-pills"></i> 4. Medication & Treatment Logs</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-capsule"></i> 4. Medication & Treatment Logs</h4>
                             <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                                 <thead>
                                     <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
@@ -266,7 +266,7 @@ function renderPatientRecord() {
 
                         <!-- 5. Final billing & Payments summary -->
                         <div>
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fas fa-file-invoice-dollar"></i> 5. Final Billing & Financial Ledger</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-file-earmark-medical"></i> 5. Final Billing & Financial Ledger</h4>
                             <div style="display: flex; justify-content: space-between; gap: 20px; font-size: 12px; align-items: flex-start;">
                                 <div style="flex: 1.2;">
                                     <table style="width: 100%; border-collapse: collapse; font-size:11px;">
@@ -364,7 +364,7 @@ function renderPatientRecord() {
 
 function loadRecordDropdownListener() {
     if (!window.recordDropdownListenerAdded) {
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('record-search-results');
             const input = document.getElementById('record-patient-search');
             if (dropdown && input && e.target !== input && !dropdown.contains(e.target)) {
@@ -387,7 +387,7 @@ async function loadAllPatientsForRecord() {
             // Also sync to localStorage as fallback
             localStorage.setItem('patients', JSON.stringify(allPatientsForRecord));
         }
-    } catch (err) {
+    } catch(err) {
         console.error('Failed to load patients for record search:', err);
         // Fallback to localStorage
         allPatientsForRecord = JSON.parse(localStorage.getItem('patients') || '[]');
@@ -419,7 +419,7 @@ function filterRecordPatients(query) {
         resultsContainer.innerHTML = filtered.map(p => `
             <div class="autocomplete-item" style="padding:12px; border-bottom:1px solid #eee; cursor:pointer;" onclick="loadPatientToRecord('${p.patient_id || p._id}')">
                 <div style="font-weight:bold; color:#2d3748;">${p.name}</div>
-                <div style="font-size:12px; color:#718096;">ID: ${p.patient_id || p._id} &nbsp;|&nbsp; ${p.gender || ''} ${p.age ? '| Age: ' + p.age : ''} &nbsp;|&nbsp; Bed: ${p.bed_no || '-'}</div>
+                <div style="font-size:12px; color:#718096;">ID: ${p.patient_id || p._id} &nbsp;|&nbsp; ${p.gender || ''} ${p.age ? '| Age: '+p.age : ''} &nbsp;|&nbsp; Bed: ${p.bed_no || '-'}</div>
             </div>
         `).join('');
     }
@@ -438,7 +438,7 @@ async function loadPatientToRecord(patientId) {
         if (result.success && result.patient) {
             p = result.patient;
         }
-    } catch (err) {
+    } catch(err) {
         console.error('Failed to fetch latest patient info:', err);
     }
 
@@ -474,7 +474,7 @@ async function loadPatientToRecord(patientId) {
     document.getElementById('rec-mobile').textContent = p.mobile || '';
     document.getElementById('rec-doa').textContent = fmtDate(p.admission_date);
     document.getElementById('rec-toa').textContent = fmtTime(p.admission_time || p.admission_date);
-
+    
     // Logic for Physician/Surgeon-in-Charge + Auto-load Signature from Surgery
     const allSurgeries = JSON.parse(localStorage.getItem('surgeries') || '[]');
     const lsSurgeries = allSurgeries.filter(s => String(s.patient_id) === String(currentRecordPatientId));
@@ -500,7 +500,7 @@ async function loadPatientToRecord(patientId) {
     // 3. Try to fetch from latest Discharge Summary for Diagnosis/Dates
     const dischargeList = JSON.parse(localStorage.getItem('discharge_records') || '[]');
     const latestDischarge = [...dischargeList].reverse().find(d => d.patientId === currentRecordPatientId);
-
+    
     if (latestDischarge) {
         document.getElementById('rec-dod').textContent = fmtDate(latestDischarge.dischargeDate || p.discharge_date);
         document.getElementById('rec-tod').textContent = fmtTime(latestDischarge.dischargeTime || p.discharge_time || '');
@@ -580,7 +580,7 @@ async function loadPatientToRecord(patientId) {
 function handleSignatureUpload(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             const imgEl = document.getElementById('sig-preview-img');
             imgEl.src = e.target.result;
             imgEl.style.display = 'block';
@@ -705,7 +705,7 @@ async function populatePatientJourney(patientId, p) {
         if (p && p.surgeries && p.surgeries.length > 0) {
             surgeryHistoryTbody.innerHTML = p.surgeries.map(s => {
                 const date = fmtDate(s.surgeryDate);
-                const imgProof = s.guardianSignature
+                const imgProof = s.guardianSignature 
                     ? `<img src="${s.guardianSignature}" style="max-height: 35px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px; background: #fff;" alt="Sign Proof">`
                     : '<span style="color:#cbd5e1; font-style:italic;">No Proof</span>';
                 return `
@@ -761,9 +761,9 @@ async function populatePatientJourney(patientId, p) {
                     meds.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
                     medsTbody.innerHTML = meds.map(m => {
                         const isGiven = m.status !== 'Pending';
-                        const statusText = isGiven
-                            ? `<span style="color:#10b981; font-weight:bold;"><i class="fas fa-check-double"></i> Given</span>`
-                            : `<span style="color:#f59e0b; font-weight:bold;"><i class="fas fa-clock"></i> Scheduled</span>`;
+                        const statusText = isGiven 
+                            ? `<span style="color:#10b981; font-weight:bold;"><i class="bi bi-check-all"></i> Given</span>`
+                            : `<span style="color:#f59e0b; font-weight:bold;"><i class="bi bi-clock"></i> Scheduled</span>`;
                         const doneDetails = isGiven
                             ? `${m.doneBy} on ${m.doneTime}`
                             : '-';
@@ -814,9 +814,9 @@ async function populatePatientJourney(patientId, p) {
                 // Billing totals
                 const disc = parseFloat(patientBill.discount) || 0;
                 const totalPaid = (patientBill.payments || []).reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
-
+                
                 let grandTotal = 0;
-
+                
                 // 1. Bed Stay charges
                 if (p && p.bedHistory && p.bedHistory.length > 0) {
                     p.bedHistory.forEach(bed => {
@@ -853,7 +853,7 @@ async function populatePatientJourney(patientId, p) {
                         }
                     });
                 }
-
+                
                 const netPayable = grandTotal - disc;
                 const balDue = netPayable - totalPaid;
 
@@ -861,7 +861,7 @@ async function populatePatientJourney(patientId, p) {
                 document.getElementById('j-discount').textContent = `₹${disc}`;
                 document.getElementById('j-net-payable').textContent = `₹${netPayable}`;
                 document.getElementById('j-total-paid').textContent = `₹${totalPaid}`;
-
+                
                 const balDueEl = document.getElementById('j-balance-due');
                 balDueEl.textContent = `₹${balDue}`;
                 if (balDue > 0) {
@@ -872,7 +872,7 @@ async function populatePatientJourney(patientId, p) {
             } else {
                 // Fallback if no bill exists
                 let grandTotal = 0;
-
+                
                 // 1. Bed Stay charges
                 if (p && p.bedHistory && p.bedHistory.length > 0) {
                     p.bedHistory.forEach(bed => {
@@ -911,7 +911,7 @@ async function populatePatientJourney(patientId, p) {
                 document.getElementById('j-net-payable').textContent = `₹${grandTotal}`;
                 document.getElementById('j-total-paid').textContent = `₹${totalPaid}`;
                 document.getElementById('j-balance-due').textContent = `₹${balDue}`;
-
+                
                 const ledgerTbody = document.getElementById('journey-financial-history');
                 if (ledgerTbody) {
                     ledgerTbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px; color:#cbd5e1;">No financial ledger recorded in Billing.</td></tr>`;

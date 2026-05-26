@@ -7,7 +7,7 @@ async function renderSettings() {
         if (moduleEl) {
             moduleEl.innerHTML = `
                 <div style="display:flex; height:80vh; align-items:center; justify-content:center; flex-direction:column; color:#ef4444; gap:20px;">
-                    <i class="fas fa-lock" style="font-size:48px;"></i>
+                    <i class="bi bi-lock" style="font-size:48px;"></i>
                     <h2 style="margin:0; font-family:'Outfit', sans-serif;">Access Denied</h2>
                     <p style="margin:0; color:#64748b; font-weight:600;">You do not have permission to access System Settings.</p>
                 </div>
@@ -181,14 +181,14 @@ async function renderSettings() {
             <div class="module-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                 <h2 style="font-size: 28px; font-weight: 800; color: var(--text-main); margin: 0; position: relative; padding-left: 15px; display: flex; align-items: center; gap: 8px;">
                     <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 24px; width: 4px; background: var(--primary); border-radius: 4px;"></span>
-                    <i class="fas fa-cog" style="color: var(--primary);"></i> System Settings
+                    <i class="bi bi-gear" style="color: var(--primary);"></i> System Settings
                 </h2>
                 <div style="display:flex; gap:12px;">
                     <button class="btn btn-success" onclick="saveSettings()">
-                        <i class="fas fa-save"></i> Save Changes
+                        <i class="bi bi-save"></i> Save Changes
                     </button>
                     <button class="btn" onclick="resetSettings()">
-                        <i class="fas fa-undo"></i> Reset Settings
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset Settings
                     </button>
                 </div>
             </div>
@@ -197,22 +197,22 @@ async function renderSettings() {
                 <!-- Sidebar Buttons -->
                 <div class="settings-sidebar">
                     <button class="settings-nav-btn active" id="btn-tab-general" onclick="showSettingsTab('general')">
-                        <i class="fas fa-sliders-h"></i> <span>General</span>
+                        <i class="bi bi-sliders"></i> <span>General</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-beds" onclick="showSettingsTab('beds')">
-                        <i class="fas fa-bed"></i> <span>Bed Management</span>
+                        <i class="bi bi-bed"></i> <span>Bed Management</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-billing" onclick="showSettingsTab('billing')">
-                        <i class="fas fa-credit-card"></i> <span>Billing</span>
+                        <i class="bi bi-credit-card"></i> <span>Billing</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-notifications" onclick="showSettingsTab('notifications')">
-                        <i class="fas fa-bell"></i> <span>Notifications</span>
+                        <i class="bi bi-bell"></i> <span>Notifications</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-security" onclick="showSettingsTab('security')">
-                        <i class="fas fa-shield-alt"></i> <span>Security</span>
+                        <i class="bi bi-shield-lock"></i> <span>Security</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-users" onclick="showSettingsTab('users')">
-                        <i class="fas fa-user-cog"></i> <span>User Settings</span>
+                        <i class="bi bi-person-gear"></i> <span>User Settings</span>
                     </button>
                 </div>
                 
@@ -222,7 +222,7 @@ async function renderSettings() {
                     <!-- 1. GENERAL TAB -->
                     <div id="settings-general" class="settings-tab-content">
                         <div class="form-section">
-                            <h3><i class="fas fa-hospital" style="color:var(--primary, #4f46e5);"></i> Hospital Information</h3>
+                            <h3><i class="bi bi-hospital" style="color:var(--primary, #4f46e5);"></i> Hospital Information</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Hospital Name</label>
@@ -250,7 +250,7 @@ async function renderSettings() {
                                 </div>
                                 <div class="form-group" style="grid-column: span 2;">
                                     <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%); border-radius:10px; border:1px solid #e0e7ff;">
-                                        <i class="fas fa-bed" style="color:#6366f1; font-size:18px;"></i>
+                                        <i class="bi bi-bed" style="color:#6366f1; font-size:18px;"></i>
                                         <div>
                                             <strong style="color:#1e293b; font-size:13px;">Bed Configuration</strong>
                                             <p style="margin:2px 0 0; font-size:11px; color:#64748b;">Go to <a href="javascript:void(0)" onclick="showSettingsTab('beds')" style="color:#6366f1; font-weight:700; text-decoration:none;">Bed Management</a> tab to customize ward beds.</p>
@@ -262,7 +262,7 @@ async function renderSettings() {
                         </div>
                         
                         <div class="form-section">
-                            <h3><i class="fas fa-palette" style="color:#eab308;"></i> Appearance & Themes</h3>
+                            <h3><i class="bi bi-palette" style="color:#eab308;"></i> Appearance & Themes</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Theme Mode</label>
@@ -357,26 +357,26 @@ async function renderSettings() {
                         </style>
                         
                         <div class="bed-mgmt-header">
-                            <i class="fas fa-bed"></i>
-                            <div>
-                                <h3>Bed Management</h3>
-                                <p>Configure ward-wise bed allocation for your hospital</p>
+                                <i class="bi bi-bed"></i>
+                                <div>
+                                    <h3>Bed Management</h3>
+                                    <p>Configure ward-wise bed allocation for your hospital</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="bed-gender-note">
-                            <i class="fas fa-info-circle"></i>
-                            <p>
-                                <strong>Gender-Based Filtering:</strong> Male gender select karne par sirf <strong>Male Ward</strong> beds dikhenge, 
-                                Female select karne par sirf <strong>Female Ward</strong> beds dikhenge. 
-                                <strong>ICU</strong> aur <strong>Private Room</strong> dono genders ke liye common hain.
-                            </p>
-                        </div>
+                            
+                            <div class="bed-gender-note">
+                                <i class="bi bi-info-circle"></i>
+                                <p>
+                                    <strong>Gender-Based Filtering:</strong> Male gender select karne par sirf <strong>Male Ward</strong> beds dikhenge, 
+                                    Female select karne par sirf <strong>Female Ward</strong> beds dikhenge. 
+                                    <strong>ICU</strong> aur <strong>Private Room</strong> dono genders ke liye common hain.
+                                </p>
+                            </div>
                         
                         <div class="ward-cards-grid">
                             <div class="ward-card male-ward">
                                 <div class="ward-card-header">
-                                    <div class="ward-card-icon"><i class="fas fa-mars"></i></div>
+                                    <div class="ward-card-icon"><i class="bi bi-gender-male"></i></div>
                                     <div>
                                         <div class="ward-card-title">Male Ward</div>
                                         <div class="ward-card-subtitle">General Ward — Male Only</div>
@@ -393,7 +393,7 @@ async function renderSettings() {
                             
                             <div class="ward-card female-ward">
                                 <div class="ward-card-header">
-                                    <div class="ward-card-icon"><i class="fas fa-venus"></i></div>
+                                    <div class="ward-card-icon"><i class="bi bi-gender-female"></i></div>
                                     <div>
                                         <div class="ward-card-title">Female Ward</div>
                                         <div class="ward-card-subtitle">General Ward — Female Only</div>
@@ -410,7 +410,7 @@ async function renderSettings() {
                             
                             <div class="ward-card icu-ward">
                                 <div class="ward-card-header">
-                                    <div class="ward-card-icon"><i class="fas fa-heartbeat"></i></div>
+                                    <div class="ward-card-icon"><i class="bi bi-activity"></i></div>
                                     <div>
                                         <div class="ward-card-title">ICU Ward</div>
                                         <div class="ward-card-subtitle">Intensive Care — Common (All Genders)</div>
@@ -427,7 +427,7 @@ async function renderSettings() {
                             
                             <div class="ward-card private-ward">
                                 <div class="ward-card-header">
-                                    <div class="ward-card-icon"><i class="fas fa-door-closed"></i></div>
+                                    <div class="ward-card-icon"><i class="bi bi-door-closed"></i></div>
                                     <div>
                                         <div class="ward-card-title">Private Room</div>
                                         <div class="ward-card-subtitle">Private Rooms — Common (All Genders)</div>
@@ -444,7 +444,7 @@ async function renderSettings() {
                         </div>
                         
                         <div class="bed-preview-section" id="bed-preview-section">
-                            <div class="bed-preview-title"><i class="fas fa-eye" style="color:#6366f1;"></i> Live Bed Preview</div>
+                            <div class="bed-preview-title"><i class="bi bi-eye" style="color:#6366f1;"></i> Live Bed Preview</div>
                             <div id="bed-preview-content">Loading...</div>
                         </div>
                     </div>
@@ -452,7 +452,7 @@ async function renderSettings() {
                     <!-- 2. BILLING TAB -->
                     <div id="settings-billing" class="settings-tab-content" style="display:none;">
                         <div class="form-section">
-                            <h3><i class="fas fa-money-bill-wave" style="color:var(--success, #10b981);"></i> Rates & Consultation Charges</h3>
+                            <h3><i class="bi bi-cash-stack" style="color:var(--success, #10b981);"></i> Rates & Consultation Charges</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Currency Symbol</label>
@@ -482,7 +482,7 @@ async function renderSettings() {
                         </div>
                         
                         <div class="form-section">
-                            <h3><i class="fas fa-file-invoice" style="color:#0ea5e9;"></i> Invoice Configurations</h3>
+                            <h3><i class="bi bi-file-earmark-text" style="color:#0ea5e9;"></i> Invoice Configurations</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Invoice Prefix</label>
@@ -505,7 +505,7 @@ async function renderSettings() {
                     <!-- 3. NOTIFICATIONS TAB -->
                     <div id="settings-notifications" class="settings-tab-content" style="display:none;">
                         <div class="form-section">
-                            <h3><i class="fas fa-envelope" style="color:var(--primary, #4f46e5);"></i> Email Notification Triggers</h3>
+                            <h3><i class="bi bi-envelope" style="color:var(--primary, #4f46e5);"></i> Email Notification Triggers</h3>
                             <div style="display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:20px;">
                                 <div class="form-group-checkbox">
                                     <input type="checkbox" id="email-new-patient">
@@ -527,7 +527,7 @@ async function renderSettings() {
                         </div>
                         
                         <div class="form-section">
-                            <h3><i class="fas fa-sms" style="color:#06b6d4;"></i> SMS API Configurations</h3>
+                            <h3><i class="bi bi-chat-left-text" style="color:#06b6d4;"></i> SMS API Configurations</h3>
                             <div class="form-grid">
                                 <div class="form-group checkbox" style="grid-column: span 2; display:grid; grid-template-columns:1fr; gap:12px;">
                                     <div class="form-group-checkbox">
@@ -554,7 +554,7 @@ async function renderSettings() {
                     <!-- 4. SECURITY TAB -->
                     <div id="settings-security" class="settings-tab-content" style="display:none;">
                         <div class="form-section">
-                            <h3><i class="fas fa-shield-alt" style="color:var(--danger, #ef4444);"></i> Password Hardening Policies</h3>
+                            <h3><i class="bi bi-shield-lock" style="color:var(--danger, #ef4444);"></i> Password Hardening Policies</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Minimum Password Length</label>
@@ -578,7 +578,7 @@ async function renderSettings() {
                         </div>
                         
                         <div class="form-section">
-                            <h3><i class="fas fa-history" style="color:#8b5cf6;"></i> Session Policies</h3>
+                            <h3><i class="bi bi-clock-history" style="color:#8b5cf6;"></i> Session Policies</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Automatic Session Timeout (minutes)</label>
@@ -601,7 +601,7 @@ async function renderSettings() {
                     <!-- 5. USER SETTINGS TAB -->
                     <div id="settings-users" class="settings-tab-content" style="display:none;">
                         <div class="form-section">
-                            <h3><i class="fas fa-user-shield" style="color:#3b82f6;"></i> User Access Defaults</h3>
+                            <h3><i class="bi bi-person-lock" style="color:#3b82f6;"></i> User Access Defaults</h3>
                             <div class="form-grid">
                                 <div class="form-group">
                                     <label>Default Assigned Doctor</label>
@@ -802,7 +802,7 @@ function updateBedPreview() {
     // Male Ward
     if (maleCount > 0) {
         html += `<div class="bed-preview-ward">
-            <div class="bed-preview-ward-title"><i class="fas fa-mars" style="color:#3b82f6;"></i> Male Ward (${maleCount} beds)</div>
+            <div class="bed-preview-ward-title"><i class="bi bi-gender-male" style="color:#3b82f6;"></i> Male Ward (${maleCount} beds)</div>
             <div class="bed-preview-grid">`;
         for (let i = 1; i <= maleCount; i++) html += `<span class="bed-chip male">Male-G${i}</span>`;
         html += `</div></div>`;
@@ -811,7 +811,7 @@ function updateBedPreview() {
     // Female Ward
     if (femaleCount > 0) {
         html += `<div class="bed-preview-ward">
-            <div class="bed-preview-ward-title"><i class="fas fa-venus" style="color:#ec4899;"></i> Female Ward (${femaleCount} beds)</div>
+            <div class="bed-preview-ward-title"><i class="bi bi-gender-female" style="color:#ec4899;"></i> Female Ward (${femaleCount} beds)</div>
             <div class="bed-preview-grid">`;
         for (let i = 1; i <= femaleCount; i++) html += `<span class="bed-chip female">Female-G${i}</span>`;
         html += `</div></div>`;
@@ -820,7 +820,7 @@ function updateBedPreview() {
     // ICU
     if (icuCount > 0) {
         html += `<div class="bed-preview-ward">
-            <div class="bed-preview-ward-title"><i class="fas fa-heartbeat" style="color:#ef4444;"></i> ICU Ward (${icuCount} beds) — Common</div>
+            <div class="bed-preview-ward-title"><i class="bi bi-activity" style="color:#ef4444;"></i> ICU Ward (${icuCount} beds) — Common</div>
             <div class="bed-preview-grid">`;
         for (let i = 1; i <= icuCount; i++) html += `<span class="bed-chip icu">ICU-${i}</span>`;
         html += `</div></div>`;
@@ -829,13 +829,13 @@ function updateBedPreview() {
     // Private
     if (privateCount > 0) {
         html += `<div class="bed-preview-ward">
-            <div class="bed-preview-ward-title"><i class="fas fa-door-closed" style="color:#f59e0b;"></i> Private Room (${privateCount} beds) — Common</div>
+            <div class="bed-preview-ward-title"><i class="bi bi-door-closed" style="color:#f59e0b;"></i> Private Room (${privateCount} beds) — Common</div>
             <div class="bed-preview-grid">`;
         for (let i = 1; i <= privateCount; i++) html += `<span class="bed-chip private">Private-${i}</span>`;
         html += `</div></div>`;
     }
     
-    html += `<div class="bed-total-badge"><i class="fas fa-hospital"></i> Total: ${total} Beds</div>`;
+    html += `<div class="bed-total-badge"><i class="bi bi-hospital"></i> Total: ${total} Beds</div>`;
     previewEl.innerHTML = html;
 }
 
@@ -900,8 +900,67 @@ function applyTheme(theme, mode) {
     }
 }
 
+function updateThemeToggleButtons() {
+    const isDark = document.body.classList.contains('dark-theme');
+    const toggleButtons = document.querySelectorAll('.theme-toggle-btn i');
+    toggleButtons.forEach(icon => {
+        if (isDark) {
+            icon.className = 'bi bi-sun-fill';
+            icon.style.color = '#f59e0b';
+        } else {
+            icon.className = 'bi bi-moon-fill';
+            icon.style.color = '#64748b';
+        }
+    });
+}
+
+function toggleTheme() {
+    const currentMode = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+    const newMode = currentMode === 'dark' ? 'light' : 'dark';
+    const currentColor = (window.hospitalSettings && window.hospitalSettings['theme-color']) || 'indigo';
+
+    // Apply theme locally
+    applyTheme(currentColor, newMode);
+    
+    // Save locally in hospitalSettings
+    if (!window.hospitalSettings) window.hospitalSettings = {};
+    window.hospitalSettings['theme-mode'] = newMode;
+    
+    // Save to localStorage
+    localStorage.setItem('theme-mode', newMode);
+    
+    // Update button icons
+    updateThemeToggleButtons();
+
+    // Sync settings in the Settings tab select dropdown if it exists
+    const selectEl = document.getElementById('theme-mode');
+    if (selectEl) {
+        selectEl.value = newMode;
+    }
+
+    // Sync to backend (non-blocking)
+    const token = sessionStorage.getItem('token');
+    if (token) {
+        fetch(`${API_BASE}settings`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(window.hospitalSettings)
+        }).catch(err => console.error("Error saving theme to backend:", err));
+    }
+}
+
 async function applyGlobalSettings() {
     console.log("Applying global settings...");
+    
+    // Load from localStorage first to prevent flash
+    const localMode = localStorage.getItem('theme-mode') || 'light';
+    const localColor = localStorage.getItem('theme-color') || 'indigo';
+    applyTheme(localColor, localMode);
+    updateThemeToggleButtons();
+    
     try {
         const response = await fetch(`${API_BASE}settings`, {
             headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
@@ -916,7 +975,15 @@ async function applyGlobalSettings() {
                 el.textContent = hName;
             });
 
-            applyTheme(result.settings['theme-color'] || 'indigo', result.settings['theme-mode'] || 'light');
+            const backendMode = result.settings['theme-mode'] || 'light';
+            const backendColor = result.settings['theme-color'] || 'indigo';
+            
+            // Sync to local storage
+            localStorage.setItem('theme-mode', backendMode);
+            localStorage.setItem('theme-color', backendColor);
+
+            applyTheme(backendColor, backendMode);
+            updateThemeToggleButtons();
 
             if (typeof calculateBillingTotals === 'function' && document.getElementById('billing-items')) {
                 if (typeof renderBilling === 'function' && currentModule === 'billing') {
@@ -928,6 +995,12 @@ async function applyGlobalSettings() {
         console.error("Error applying settings from backend:", e);
     }
 }
+
+// Expose functions to window
+window.applyTheme = applyTheme;
+window.updateThemeToggleButtons = updateThemeToggleButtons;
+window.toggleTheme = toggleTheme;
+window.applyGlobalSettings = applyGlobalSettings;
 
 // Automatically apply settings once script is loaded
 applyGlobalSettings();

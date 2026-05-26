@@ -40,28 +40,28 @@ function renderBilling() {
                 <div class="dashboard-cards">
                     <div class="dash-card pro-card-blue">
                         <div class="card-info"><span class="label">Total Patients</span><h3 id="stat-total-patients" class="value">0</h3></div>
-                        <div class="card-icon"><i class="fas fa-user-injured"></i></div>
+                        <div class="card-icon"><i class="bi bi-person"></i></div>
                     </div>
                     <div class="dash-card pro-card-purple">
                         <div class="card-info"><span class="label">Total Invoices</span><h3 id="stat-total-bills" class="value">0</h3></div>
-                        <div class="card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="card-icon"><i class="bi bi-file-earmark-medical"></i></div>
                     </div>
                     <div class="dash-card pro-card-green">
                         <div class="card-info"><span class="label">Payments Collected</span><h3 id="stat-paid-bills" class="value">0</h3></div>
-                        <div class="card-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="card-icon"><i class="bi bi-check-all"></i></div>
                     </div>
                     <div class="dash-card pro-card-red">
                         <div class="card-info"><span class="label">Action Required</span><h3 id="stat-pending-bills" class="value">0</h3></div>
-                        <div class="card-icon"><i class="fas fa-clock"></i></div>
+                        <div class="card-icon"><i class="bi bi-clock"></i></div>
                     </div>
                 </div>
             </div>
 
             <div class="billing-search-panel">
-                <div class="search-header"><i class="fas fa-search"></i> Find Patient to Generate Bill</div>
+                <div class="search-header"><i class="bi bi-search"></i> Find Patient to Generate Bill</div>
                 <div class="search-bar-container">
                     <div class="search-input-group">
-                        <i class="fas fa-user"></i>
+                        <i class="bi bi-person"></i>
                         <input type="text" id="billing-patient-search" class="professional-search-input" placeholder="Search by Name or Patient ID..." oninput="searchBillingPatients()">
                     </div>
                 </div>
@@ -76,15 +76,15 @@ function renderBilling() {
 
             <div id="bills-list" class="bills-list">
                 <div class="loading-state" style="text-align:center; padding:40px; color:var(--b-text-light);">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i><p>Synchronizing billing records...</p>
+                    <i class="bi bi-arrow-repeat fa-spin fa-2x"></i><p>Synchronizing billing records...</p>
                 </div>
             </div>
 
             <!-- Detailed Billing Report Modal -->
             <div id="billing-report-wrap" class="billing-report-overlay" style="display:none;">
                 <div class="report-actions-top no-print">
-                    <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print Invoice</button>
-                    <button class="btn btn-secondary" onclick="closeBillingReport()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Invoice</button>
+                    <button class="btn btn-secondary" onclick="closeBillingReport()"><i class="bi bi-x-lg"></i> Close</button>
                 </div>
                 
                 <div class="a4-bill-container" id="a4-bill-report">
@@ -148,7 +148,7 @@ function renderBilling() {
 
                     <div class="billing-footer" style="display:flex; justify-content:space-between; margin-top:30px; gap:30px;">
                         <div class="payment-history-wrap">
-                            <h4 class="history-title"><i class="fas fa-history"></i> Payment Ledger</h4>
+                            <h4 class="history-title"><i class="bi bi-clock-history"></i> Payment Ledger</h4>
                             <div id="add-payment-panel" class="no-print" style="margin-bottom:15px; padding:10px; background:#f8fafc; border-radius:8px;">
                                 <div style="display:flex; gap:10px;">
                                     <input type="number" id="pay-amt" placeholder="Amount" style="width:100px; padding:5px;">
@@ -274,7 +274,7 @@ function showBillingTab(tab) {
                 ${list.map(bill => {
                     const isPaid = bill.status === 'Paid';
                     const statusClass = isPaid ? 'paid' : 'pending';
-                    const statusIcon = isPaid ? 'fa-check-circle' : 'fa-clock';
+                    const statusIcon = isPaid ? 'bi-check-circle' : 'bi-clock';
                     
                     return `
                     <tr>
@@ -287,19 +287,19 @@ function showBillingTab(tab) {
                         </td>
                         <td>
                             <span class="status-badge ${statusClass}">
-                                <i class="fas ${statusIcon}"></i> ${bill.status}
+                                <i class="bi ${statusIcon}"></i> ${bill.status}
                             </span>
                         </td>
                         <td style="text-align:right;">
                             <button class="bill-action-btn bill-btn-view" title="View Details" onclick="viewBill('${bill.id}')">
-                                <i class="fas fa-eye"></i>
+                                <i class="bi bi-eye"></i>
                             </button>
                             ${!isPaid ? `
                             <button class="bill-action-btn bill-btn-pay" title="Mark as Paid" onclick="markBillPaid('${bill.id}', ${bill.remaining})">
-                                <i class="fas fa-check"></i>
+                                <i class="bi bi-check-lg"></i>
                             </button>` : ''}
                             <button class="bill-action-btn bill-btn-print" title="Print Invoice" onclick="printBill('${bill.id}')">
-                                <i class="fas fa-print"></i>
+                                <i class="bi bi-printer"></i>
                             </button>
                         </td>
                     </tr>`;
@@ -541,7 +541,7 @@ function renderPaymentHistory(payments = []) {
             <td style="padding: 8px 5px; font-weight: 700;">₹${p.amount}</td>
             <td class="no-print" style="padding: 8px 5px;">
                 <button onclick="deletePayment('${p._id}')" style="background: transparent; border: none; color: #ef4444; cursor: pointer; padding: 6px; font-size: 14px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px;" onmouseover="this.style.background='#fef2f2'; this.style.color='#dc2626';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">
-                    <i class="fas fa-trash-alt"></i>
+                    <i class="bi bi-trash"></i>
                 </button>
             </td>
         </tr>

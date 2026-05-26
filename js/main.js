@@ -22,6 +22,8 @@ function hideLoading() {
     if (overlay) overlay.style.display = 'none';
 }
 
+let notificationTimeout = null;
+
 function showNotification(message, type = 'info', title = 'Notification') {
     const notification = document.getElementById('notification');
     if (!notification) return;
@@ -30,18 +32,29 @@ function showNotification(message, type = 'info', title = 'Notification') {
     const titleEl = document.getElementById('notification-title');
     const messageEl = document.getElementById('notification-message');
 
+    if (notificationTimeout) clearTimeout(notificationTimeout);
+
     notification.className = `notification ${type}`;
-    icon.className = type === 'success' ? 'fas fa-check-circle' :
-        type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-info-circle';
+    icon.className = type === 'success' ? 'bi bi-check-circle-fill' :
+        type === 'error' ? 'bi bi-exclamation-circle-fill' :
+        type === 'warning' ? 'bi bi-exclamation-triangle-fill' : 'bi bi-info-circle-fill';
+    
+    if (title === 'Notification') {
+        title = type.charAt(0).toUpperCase() + type.slice(1);
+    }
+    
     titleEl.textContent = title;
     messageEl.textContent = message;
-    notification.style.display = 'flex';
+    notification.classList.add('show');
 
-    setTimeout(() => notification.style.display = 'none', 5000);
+    notificationTimeout = setTimeout(() => {
+        notification.classList.remove('show');
+    }, 4000);
 }
 
 function hideNotification() {
-    document.getElementById('notification').style.display = 'none';
+    const notification = document.getElementById('notification');
+    if (notification) notification.classList.remove('show');
 }
 
 // ==================== AUTH FUNCTIONS ====================
@@ -72,10 +85,10 @@ function toggleAuthPanel(mode) {
 }
 
 async function login() {
-    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('password').value.trim();
 
-    if (!username || !password) {
+    if (!email || !password) {
         document.getElementById('login-error').textContent = 'Please fill all fields';
         return;
     }
@@ -86,7 +99,7 @@ async function login() {
         const response = await fetch(`${API_BASE}auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ email, password })
         });
 
         const result = await response.json();
@@ -146,7 +159,6 @@ async function signup() {
     const name = document.getElementById('signup-name').value.trim();
     const email = document.getElementById('signup-email').value.trim();
     const mobile = document.getElementById('signup-mobile').value.trim();
-    const username = document.getElementById('signup-username').value.trim();
     const password = document.getElementById('signup-password').value;
     const confirm = document.getElementById('signup-confirm').value;
     const role = document.getElementById('signup-role').value;
@@ -155,7 +167,6 @@ async function signup() {
     if (!name) errors.push('Name required');
     if (!email) errors.push('Email required');
     if (!mobile || mobile.length !== 10) errors.push('Valid mobile required');
-    if (!username) errors.push('Username required');
     if (!password) errors.push('Password required');
     if (password !== confirm) errors.push('Passwords do not match');
     if (password.length < 6) errors.push('Password must be 6+ characters');
@@ -172,7 +183,7 @@ async function signup() {
         const response = await fetch(`${API_BASE}auth/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, mobile, username, password, role })
+            body: JSON.stringify({ name, email, mobile, password, role })
         });
 
         const result = await response.json();
@@ -203,7 +214,7 @@ async function switchToApp() {
     updateUserInfo();
     updateClock();
     setInterval(updateClock, 1000);
-
+    
     // Handle initial routing based on URL hash
     const hash = window.location.hash.substring(1);
     if (hash) {
@@ -212,7 +223,7 @@ async function switchToApp() {
         showModule('dashboard', true);
         window.history.replaceState(null, '', '#dashboard');
     }
-
+    
     // Initialize push notifications
     if (typeof initPushNotifications === 'function') {
         initPushNotifications();
@@ -282,16 +293,18 @@ function updateUserInfo() {
             if (currentUser.avatar) {
                 // Construct full URL
                 const baseUrl = API_BASE.replace('/api/', '');
-                const fullUrl = currentUser.avatar.startsWith('http') ? currentUser.avatar : `${baseUrl}${currentUser.avatar}`;
+                const fullUrl = currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:') ? currentUser.avatar : `${baseUrl}${currentUser.avatar}`;
                 console.log("Loading Sidebar Avatar from:", fullUrl);
                 avatarDiv.innerHTML = `<img src="${fullUrl}" alt="User" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                avatarDiv.style.cursor = 'pointer';
+                avatarDiv.onclick = function(e) { e.stopPropagation(); openLightbox(fullUrl, currentUser.name); };
             } else if (currentUser.name && currentUser.name.trim().length > 0) {
                 const initials = currentUser.name.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 avatarDiv.textContent = initials;
                 avatarDiv.innerHTML = initials; // Ensure text is set
                 avatarDiv.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)';
             } else {
-                avatarDiv.innerHTML = '<i class="fas fa-user"></i>';
+                avatarDiv.innerHTML = '<i class="bi bi-person"></i>';
             }
         }
 
@@ -419,14 +432,56 @@ function showModule(moduleName, preventHashUpdate = false) {
 
     currentModule = moduleName;
 
+    const iconMap = {
+        'dashboard': { outline: 'bi-house', fill: 'bi-house-fill' },
+        'patients': { outline: 'bi-people', fill: 'bi-people-fill' },
+        'add-patient': { outline: 'bi-person-plus', fill: 'bi-person-plus-fill' },
+        'daily-notes': { outline: 'bi-file-earmark-text', fill: 'bi-file-earmark-text-fill' },
+        'billing': { outline: 'bi-credit-card', fill: 'bi-credit-card-fill' },
+        'discharge': { outline: 'bi-box-arrow-right', fill: 'bi-box-arrow-right' },
+        'users': { outline: 'bi-person-gear', fill: 'bi-person-fill-gear' },
+        'reports': { outline: 'bi-bar-chart-line', fill: 'bi-bar-chart-line-fill' },
+        'patient-record': { outline: 'bi-file-earmark-medical', fill: 'bi-file-earmark-medical-fill' },
+        'settings': { outline: 'bi-gear', fill: 'bi-gear-fill' }
+    };
+
+    // Revert all sidebar icons to outline state
+    document.querySelectorAll('.menu .menu-item').forEach(item => {
+        const iconEl = item.querySelector('i');
+        if (!iconEl) return;
+        const onclickAttr = item.getAttribute('onclick') || '';
+        for (const [mod, icons] of Object.entries(iconMap)) {
+            if (onclickAttr.includes(mod)) {
+                iconEl.className = `bi ${icons.outline}`;
+                break;
+            }
+        }
+    });
+
     document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
     const activeItem = document.querySelector(`.menu-item[onclick*="${moduleName}"]`);
-    if (activeItem) activeItem.classList.add('active');
+    if (activeItem) {
+        activeItem.classList.add('active');
+        const activeIconEl = activeItem.querySelector('i');
+        if (activeIconEl && iconMap[moduleName]) {
+            activeIconEl.className = `bi ${iconMap[moduleName].fill}`;
+        }
+    }
 
     // Close sidebar on mobile after selecting a module
     if (window.innerWidth <= 992) {
         const sidebar = document.querySelector('.sidebar');
         if (sidebar) sidebar.classList.remove('active');
+    }
+
+    // Toggle theme button visibility based on dashboard module
+    const mainThemeToggle = document.querySelector('.main-theme-toggle');
+    if (mainThemeToggle) {
+        if (moduleName === 'dashboard') {
+            mainThemeToggle.classList.add('active-module');
+        } else {
+            mainThemeToggle.classList.remove('active-module');
+        }
     }
 
     // Update URL hash to support browser back/forward buttons
@@ -807,22 +862,154 @@ window.handleOtpVerify = handleOtpVerify;
 window.handleNewPassSubmit = handleNewPassSubmit;
 
 // ==================== USER PROFILE LOGIC ====================
+let profileAuthMode = 'password'; // 'password' or 'otp'
+let profileOtpVerified = false;
+let profileVerifiedOtpCode = '';
+let profileOtpTimerInterval = null;
+
+function toggleProfileAuthMode(mode) {
+    profileAuthMode = mode;
+    const pwdGroup = document.getElementById('profile-current-pw-group');
+    const otpGroup = document.getElementById('profile-otp-group');
+    const pwdInput = document.getElementById('profile-current-password');
+    const otpInput = document.getElementById('profile-otp-input');
+
+    if (mode === 'otp') {
+        pwdGroup.style.display = 'none';
+        pwdInput.required = false;
+        
+        otpGroup.style.display = 'block';
+        otpInput.required = true;
+        
+        // Automatically send OTP when switching to OTP mode
+        sendProfileOtp();
+    } else {
+        pwdGroup.style.display = 'block';
+        pwdInput.required = true;
+        
+        otpGroup.style.display = 'none';
+        otpInput.required = false;
+        
+        // Stop timer if it was running
+        if (profileOtpTimerInterval) clearInterval(profileOtpTimerInterval);
+        const timerSpan = document.getElementById('profile-otp-timer');
+        if (timerSpan) timerSpan.innerHTML = '';
+    }
+}
+
+async function sendProfileOtp() {
+    if (!currentUser || !currentUser.email) {
+        showNotification('User email not found.', 'error');
+        return;
+    }
+
+    showLoading('Sending verification code to your email...');
+    try {
+        const response = await fetch(`${API_BASE}auth/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUser.email })
+        });
+        const result = await response.json();
+        hideLoading();
+
+        if (result.success) {
+            showNotification('Verification code sent to your email!', 'success');
+            startProfileOtpTimer();
+        } else {
+            showNotification(result.message || 'Failed to send verification code', 'error');
+        }
+    } catch (error) {
+        console.error('Send profile OTP error:', error);
+        hideLoading();
+        showNotification('Connection error.', 'error');
+    }
+}
+
+function startProfileOtpTimer() {
+    const timerSpan = document.getElementById('profile-otp-timer');
+    if (!timerSpan) return;
+
+    let timeLeft = 60;
+    timerSpan.innerHTML = `Resend in ${timeLeft}s`;
+    
+    if (profileOtpTimerInterval) clearInterval(profileOtpTimerInterval);
+
+    profileOtpTimerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+            clearInterval(profileOtpTimerInterval);
+            timerSpan.innerHTML = `<a href="#" onclick="sendProfileOtp(); event.preventDefault();" style="color: var(--primary); text-decoration: none; font-weight: 500;">Resend Code</a>`;
+        } else {
+            timerSpan.innerHTML = `Resend in ${timeLeft}s`;
+        }
+    }, 1000);
+}
+
+async function verifyProfileOtp() {
+    const otp = document.getElementById('profile-otp-input').value.trim();
+    if (!otp) {
+        showNotification('Please enter the verification code.', 'warning');
+        return;
+    }
+
+    showLoading('Verifying code...');
+    try {
+        const response = await fetch(`${API_BASE}auth/verify-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUser.email, otp })
+        });
+
+        const result = await response.json();
+        hideLoading();
+
+        if (result.success) {
+            showNotification('Code verified! You can now set a new password.', 'success');
+            profileOtpVerified = true;
+            profileVerifiedOtpCode = otp;
+
+            // Stop timer and hide it
+            if (profileOtpTimerInterval) clearInterval(profileOtpTimerInterval);
+            document.getElementById('profile-otp-timer').style.display = 'none';
+
+            // Disable OTP verification controls
+            document.getElementById('profile-otp-input').disabled = true;
+            document.getElementById('verify-profile-otp-btn').disabled = true;
+            document.getElementById('verify-profile-otp-btn').textContent = 'Verified';
+
+            // Enable new password fields
+            document.getElementById('new-password-section').style.opacity = '1';
+            document.getElementById('new-password-section').style.pointerEvents = 'auto';
+            document.getElementById('profile-new-password').disabled = false;
+            document.getElementById('profile-confirm-password').disabled = false;
+            document.getElementById('save-profile-btn').disabled = false;
+        } else {
+            showNotification(result.message || 'Invalid or expired code.', 'error');
+        }
+    } catch (error) {
+        console.error('Verify profile OTP error:', error);
+        hideLoading();
+        showNotification('Connection error.', 'error');
+    }
+}
+
 function openProfileModal() {
     if (!currentUser) return;
 
     // Fill profile info
     document.getElementById('profile-name-text').textContent = currentUser.name;
     document.getElementById('profile-role-text').textContent = currentUser.role.toUpperCase();
-    document.getElementById('profile-username').textContent = currentUser.username;
     document.getElementById('profile-email').textContent = currentUser.email || 'N/A';
+    document.getElementById('profile-role-display').textContent = (currentUser.role || 'staff').toUpperCase();
 
     // Set avatar
     const avatarContainer = document.getElementById('profile-avatar-large');
     if (currentUser.avatar) {
         // Construct full URL (Local backend or Render)
         const baseUrl = API_BASE.replace('/api/', '');
-        const fullUrl = currentUser.avatar.startsWith('http') ? currentUser.avatar : `${baseUrl}${currentUser.avatar}`;
-        avatarContainer.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        const fullUrl = currentUser.avatar.startsWith('http') || currentUser.avatar.startsWith('data:') ? currentUser.avatar : `${baseUrl}${currentUser.avatar}`;
+        avatarContainer.innerHTML = `<img src="${fullUrl}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="openLightbox('${fullUrl.replace(/'/g, "\\'")}'  , '${(currentUser.name || '').replace(/'/g, "\\\'")}')">`;
     } else {
         const initials = currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
         avatarContainer.textContent = initials;
@@ -830,11 +1017,33 @@ function openProfileModal() {
     }
 
     // Reset fields and states
+    profileAuthMode = 'password';
+    profileOtpVerified = false;
+    profileVerifiedOtpCode = '';
+    if (profileOtpTimerInterval) clearInterval(profileOtpTimerInterval);
+
     document.getElementById('profile-current-password').value = '';
     document.getElementById('profile-current-password').disabled = false;
+    document.getElementById('profile-current-password').required = true;
     document.getElementById('verify-pw-btn').disabled = false;
     document.getElementById('verify-pw-btn').textContent = 'Verify';
     document.getElementById('avatar-upload').value = ''; // Reset file input
+
+    // Reset OTP fields
+    document.getElementById('profile-otp-input').value = '';
+    document.getElementById('profile-otp-input').disabled = false;
+    document.getElementById('profile-otp-input').required = false;
+    document.getElementById('verify-profile-otp-btn').disabled = false;
+    document.getElementById('verify-profile-otp-btn').textContent = 'Verify Code';
+    const timerSpan = document.getElementById('profile-otp-timer');
+    if (timerSpan) {
+        timerSpan.innerHTML = '';
+        timerSpan.style.display = 'inline';
+    }
+
+    // Show correct default view
+    document.getElementById('profile-current-pw-group').style.display = 'block';
+    document.getElementById('profile-otp-group').style.display = 'none';
 
     document.getElementById('new-password-section').style.opacity = '0.5';
     document.getElementById('new-password-section').style.pointerEvents = 'none';
@@ -846,6 +1055,7 @@ function openProfileModal() {
 }
 
 function closeProfileModal() {
+    if (profileOtpTimerInterval) clearInterval(profileOtpTimerInterval);
     document.getElementById('profile-modal').style.display = 'none';
 }
 
@@ -971,14 +1181,30 @@ async function saveProfileChanges() {
     showLoading('Updating password...');
     try {
         const token = sessionStorage.getItem('token');
-        const response = await fetch(`${API_BASE}auth/users/${currentUser.id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ password: newPassword })
-        });
+        
+        let response;
+        if (profileAuthMode === 'otp' && profileOtpVerified) {
+            // Reset password using OTP
+            response = await fetch(`${API_BASE}auth/reset-password`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUser.email,
+                    otp: profileVerifiedOtpCode,
+                    newPassword: newPassword
+                })
+            });
+        } else {
+            // Standard update
+            response = await fetch(`${API_BASE}auth/users/${currentUser.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ password: newPassword })
+            });
+        }
 
         const result = await response.json();
         hideLoading();
@@ -1002,6 +1228,9 @@ window.previewAvatar = previewAvatar;
 window.saveProfilePhoto = saveProfilePhoto;
 window.checkCurrentPassword = checkCurrentPassword;
 window.saveProfileChanges = saveProfileChanges;
+window.toggleProfileAuthMode = toggleProfileAuthMode;
+window.sendProfileOtp = sendProfileOtp;
+window.verifyProfileOtp = verifyProfileOtp;
 
 // ==================== FCM PUSH NOTIFICATIONS ====================
 function loadScript(url) {
@@ -1020,7 +1249,7 @@ function loadScript(url) {
 
 async function initPushNotifications() {
     console.log("Initializing push notifications...");
-
+    
     if (!('serviceWorker' in navigator) || !('Notification' in window)) {
         console.warn('Push notifications not supported in this browser.');
         return;

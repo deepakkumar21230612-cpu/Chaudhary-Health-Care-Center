@@ -8,9 +8,7 @@
 
     <!-- Font Awesome -->
     <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <!-- Google Fonts - Outfit -->
@@ -51,7 +49,7 @@
                         <h2>Sign In</h2>
                         <form id="login-form" onsubmit="event.preventDefault(); login();">
                             <div class="input-group">
-                                <input type="text" id="username" placeholder="Username" required>
+                                <input type="email" id="login-email" placeholder="Email Address" required>
                             </div>
                             <div class="input-group">
                                 <input type="password" id="password" placeholder="Password" required>
@@ -79,9 +77,7 @@
                             <div class="input-group">
                                 <input type="tel" id="signup-mobile" placeholder="Mobile Number" required>
                             </div>
-                            <div class="input-group">
-                                <input type="text" id="signup-username" placeholder="Username" required>
-                            </div>
+
                             <div class="input-group">
                                 <input type="password" id="signup-password" placeholder="Password" required>
                             </div>
@@ -110,27 +106,29 @@
         <!-- Mobile Header -->
         <div class="mobile-header">
             <button id="sidebar-toggle" class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
+                <i class="bi bi-list"></i>
             </button>
             <div class="mobile-logo">
                 <img src="hlogo.png" alt="Logo">
                 <span>CHC Center</span>
             </div>
-            <div class="mobile-actions"></div>
+            <div class="mobile-actions" style="display: flex; align-items: center; gap: 10px;">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" style="border: none; background: transparent; padding: 6px 10px; cursor: pointer; border-radius: 50%; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s;">
+                    <i class="bi bi-moon-fill" style="color: #64748b;"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Sidebar -->
         <div class="sidebar">
 
 
-            <!-- Top Section -->
             <div class="sidebar-header">
-                <img src="hlogo.png" alt="CHC Logo" class="sidebar-logo" onclick="toggleSidebarCollapse()"
-                    title="Click to Collapse/Expand Sidebar" style="cursor: pointer; transition: transform 0.2s ease;">
+                <img src="hlogo.png" alt="CHC Logo" class="sidebar-logo" onclick="toggleSidebarCollapse()" title="Click to Collapse/Expand Sidebar" style="cursor: pointer; transition: transform 0.2s ease;">
                 <h2 class="sidebar-title hospital-name">Chaudhary Health Care Center</h2>
 
                 <p id="current-time" class="time-display">
-                    <i class="far fa-clock" style="color: #c951db;"></i> <span id="time"
+                    <i class="bi bi-clock"></i> <span id="time"
                         style="font-weight: bold; color: #0f172a;">00:00:00</span><br>
                     <small id="date" style="font-size: 11px;">Loading...</small>
                 </p>
@@ -139,35 +137,35 @@
             <!-- Navigation Section -->
             <div class="menu">
                 <div class="menu-item active" onclick="showModule('dashboard')">
-                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    <i class="bi bi-house"></i> <span>Home</span>
                 </div>
                 <div class="menu-item" onclick="showModule('patients')">
-                    <i class="fas fa-users"></i> <span>Patients</span>
+                    <i class="bi bi-people"></i> <span>Patients</span>
                 </div>
                 <div class="menu-item" onclick="showModule('add-patient')">
-                    <i class="fas fa-user-plus"></i> <span>Add Patient</span>
+                    <i class="bi bi-person-plus"></i> <span>Add Patient</span>
                 </div>
                 <div class="menu-item" onclick="showModule('daily-notes')">
-                    <i class="fas fa-notes-medical"></i> <span>Daily Notes</span>
+                    <i class="bi bi-file-earmark-text"></i> <span>Daily Notes</span>
                 </div>
                 <div class="menu-item" onclick="showModule('billing')">
-                    <i class="fas fa-money-bill-wave"></i> <span>Billing</span>
+                    <i class="bi bi-credit-card"></i> <span>Billing</span>
                 </div>
                 <div class="menu-item" onclick="showModule('discharge')">
-                    <i class="fas fa-sign-out-alt"></i> <span>Discharge</span>
+                    <i class="bi bi-box-arrow-right"></i> <span>Discharge</span>
                 </div>
 
                 <div id="admin-menu" class="admin-menu">
-                    <div class="menu-item" onclick="showModule('users')"><i class="fas fa-user-cog"></i>
+                    <div class="menu-item" onclick="showModule('users')"><i class="bi bi-person-gear"></i>
                         <span>Users</span>
                     </div>
-                    <div class="menu-item" onclick="showModule('reports')"><i class="fas fa-chart-bar"></i>
+                    <div class="menu-item" onclick="showModule('reports')"><i class="bi bi-bar-chart-line"></i>
                         <span>Reports</span>
                     </div>
-                    <div class="menu-item" onclick="showModule('patient-record')"><i class="fas fa-file-medical"></i>
+                    <div class="menu-item" onclick="showModule('patient-record')"><i class="bi bi-file-earmark-medical"></i>
                         <span>Patient Records</span>
                     </div>
-                    <div class="menu-item" onclick="showModule('settings')"><i class="fas fa-cog"></i>
+                    <div class="menu-item" onclick="showModule('settings')"><i class="bi bi-gear"></i>
                         <span>Settings</span>
                     </div>
                 </div>
@@ -185,7 +183,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div id="sidebar-avatar" class="initials-avatar"
                         style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative;">
-                        <i class="fas fa-user" style="font-size: 14px;"></i>
+                        <i class="bi bi-person" style="font-size: 14px;"></i>
                     </div>
                     <div style="flex: 1; overflow: hidden; text-align: left;">
                         <h3 id="current-user"
@@ -194,7 +192,7 @@
                         <p id="current-user-role" class="role-badge"
                             style="margin: 2px 0 0; font-size: 11px; padding: 2px 6px; display: inline-block;">Role</p>
                     </div>
-                    <i class="fas fa-ellipsis-h" style="color: var(--text-muted); font-size: 16px;"></i>
+                    <i class="bi bi-three-dots" style="color: var(--text-muted); font-size: 16px;"></i>
                 </div>
 
                 <!-- Dropdown Menu -->
@@ -203,14 +201,14 @@
                     <div class="menu-item"
                         style="padding: 10px 15px; border-radius: 6px; margin: 0; margin-bottom: 2px; display: flex; align-items: center; gap: 10px;"
                         onclick="openProfileModal()">
-                        <i class="fas fa-user-circle" style="color: var(--text-muted); font-size: 15px;"></i> <span
+                        <i class="bi bi-person-circle" style="color: var(--text-muted); font-size: 15px;"></i> <span
                             style="font-size: 14px; font-weight: 500;">My Profile</span>
                     </div>
                     <div style="height: 1px; background: var(--border); margin: 4px 0;"></div>
                     <div class="menu-item"
                         style="padding: 10px 15px; border-radius: 6px; margin: 0; display: flex; align-items: center; gap: 10px;"
                         onclick="logout()">
-                        <i class="fas fa-sign-out-alt" style="color: #ef4444; font-size: 15px;"></i> <span
+                        <i class="bi bi-box-arrow-left" style="color: #ef4444; font-size: 15px;"></i> <span
                             style="font-size: 14px; font-weight: 500; color: #ef4444;">Log out</span>
                     </div>
                 </div>
@@ -236,26 +234,34 @@
                 }
 
                 .menu-item:hover {
-                    background: var(--primary-light);
+                    background: transparent;
                     color: var(--primary);
                     transform: translateX(3px);
                 }
 
                 body.dark-theme .menu-item:hover {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: transparent;
                     color: var(--primary-light);
                 }
 
                 .menu-item.active {
-                    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
-                    color: #ffffff !important;
-                    font-weight: 600;
+                    background: transparent !important;
+                    color: var(--primary) !important;
+                    font-weight: 700;
                     border-left: none;
-                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+                    box-shadow: none;
                 }
 
                 .menu-item.active i {
-                    color: #ffffff !important;
+                    color: var(--primary) !important;
+                }
+
+                body.dark-theme .menu-item.active {
+                    color: var(--primary-light) !important;
+                }
+
+                body.dark-theme .menu-item.active i {
+                    color: var(--primary-light) !important;
                 }
 
                 .sidebar::-webkit-scrollbar {
@@ -275,31 +281,25 @@
                     color: var(--text-main) !important;
                     transition: all 0.2s ease !important;
                 }
-
                 #user-dropdown-menu .menu-item:hover {
                     color: var(--primary) !important;
                     background: var(--primary-light) !important;
                     transform: none !important;
                 }
-
                 #user-dropdown-menu .menu-item i {
                     transition: color 0.2s ease !important;
                 }
-
                 #user-dropdown-menu .menu-item:hover i {
                     color: var(--primary) !important;
                 }
-
                 #user-dropdown-menu .menu-item:last-child {
                     color: #ef4444 !important;
                 }
-
                 #user-dropdown-menu .menu-item:last-child:hover {
                     background: #fef2f2 !important;
                     color: #ef4444 !important;
                     transform: none !important;
                 }
-
                 #user-dropdown-menu .menu-item:last-child:hover i {
                     color: #ef4444 !important;
                 }
@@ -310,21 +310,17 @@
                     border-color: var(--border) !important;
                     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
                 }
-
                 body.dark-theme #user-dropdown-menu .menu-item:hover {
                     background: rgba(255, 255, 255, 0.06) !important;
                     color: var(--primary-light) !important;
                 }
-
                 body.dark-theme #user-dropdown-menu .menu-item:hover i {
                     color: var(--primary-light) !important;
                 }
-
                 body.dark-theme #user-dropdown-menu .menu-item:last-child:hover {
                     background: rgba(239, 68, 68, 0.15) !important;
                     color: #f87171 !important;
                 }
-
                 body.dark-theme #user-dropdown-menu .menu-item:last-child:hover i {
                     color: #f87171 !important;
                 }
@@ -334,60 +330,60 @@
                     .sidebar {
                         transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar {
                         width: 80px !important;
                         overflow: visible !important;
                     }
-
+                    
                     body.sidebar-collapsed .main-content {
                         margin-left: 80px !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .sidebar-logo {
                         max-height: 60px !important;
                         max-width: 60px !important;
                         margin-bottom: 0 !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .sidebar-title,
                     body.sidebar-collapsed .sidebar .time-display,
                     body.sidebar-collapsed .sidebar .menu .menu-item span,
-                    body.sidebar-collapsed .sidebar .user-profile-section>div:not(#user-dropdown-menu)>div:not(.initials-avatar),
-                    body.sidebar-collapsed .sidebar .user-profile-section i.fa-ellipsis-h {
+                    body.sidebar-collapsed .sidebar .user-profile-section > div:not(#user-dropdown-menu) > div:not(.initials-avatar),
+                    body.sidebar-collapsed .sidebar .user-profile-section i.bi-three-dots {
                         display: none !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .sidebar-header {
                         padding: 24px 8px 20px !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .menu .menu-item {
                         justify-content: center !important;
                         padding: 12px 0 !important;
                         margin: 4px 8px !important;
                         gap: 0 !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .menu .menu-item i {
                         margin: 0 !important;
                         font-size: 18px !important;
                         width: auto !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar .user-profile-section {
                         padding: 15px 0 !important;
                         overflow: visible !important;
                     }
-
-                    body.sidebar-collapsed .sidebar .user-profile-section>div:not(#user-dropdown-menu) {
+                    
+                    body.sidebar-collapsed .sidebar .user-profile-section > div:not(#user-dropdown-menu) {
                         width: 100% !important;
                         display: flex !important;
                         justify-content: center !important;
                         align-items: center !important;
                         gap: 0 !important;
                     }
-
+                    
                     body.sidebar-collapsed .sidebar #user-dropdown-menu {
                         position: fixed !important;
                         left: 85px !important;
@@ -428,6 +424,11 @@
 
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Global Theme Toggle Button (Top Right) -->
+            <button class="theme-toggle-btn main-theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+                <i class="bi bi-moon-fill" style="color: #64748b;"></i>
+            </button>
+
             <div class="content-header" style="display: none;">
                 <h1 id="page-title"></h1>
                 <div class="header-actions" id="header-actions"></div>
@@ -455,19 +456,19 @@
     </div>
 
     <div id="notification" class="notification">
-        <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+        <div class="notification-icon"><i class="bi bi-info-circle"></i></div>
         <div class="notification-content">
             <div id="notification-title" style="font-weight:bold;">Notification</div>
             <div id="notification-message">Message will appear here</div>
         </div>
-        <button class="notification-close" onclick="hideNotification()"><i class="fas fa-times"></i></button>
+        <button class="notification-close" onclick="hideNotification()"><i class="bi bi-x-lg"></i></button>
     </div>
 
     <!-- Logout Confirmation Modal -->
     <div id="logout-modal" class="logout-modal">
         <div class="logout-modal-content">
             <div class="logout-modal-icon">
-                <i class="fas fa-sign-out-alt"></i>
+                <i class="bi bi-box-arrow-left"></i>
             </div>
             <h2>Logout</h2>
             <p class="logout-message">
@@ -484,20 +485,17 @@
     <!-- Discharge Confirmation Modal -->
     <div id="discharge-confirm-modal" class="logout-modal">
         <div class="logout-modal-content" style="max-width: 460px;">
-            <div class="logout-modal-icon"
-                style="background: linear-gradient(135deg, #20bf6b 0%, #01baef 100%); box-shadow: 0 10px 25px -5px rgba(32, 191, 107, 0.4);">
-                <i class="fas fa-user-check" style="color: white; font-size: 32px;"></i>
+            <div class="logout-modal-icon" style="background: linear-gradient(135deg, #20bf6b 0%, #01baef 100%); box-shadow: 0 10px 25px -5px rgba(32, 191, 107, 0.4);">
+                <i class="bi bi-person-check" style="color: white; font-size: 32px;"></i>
             </div>
             <h2>Confirm Discharge</h2>
             <p class="logout-message">
-                Are you sure you want to generate the discharge summary and discharge patient <span
-                    id="discharge-confirm-patient-name" style="font-weight: 700; color: #1e293b;"></span>?<br>
+                Are you sure you want to generate the discharge summary and discharge patient <span id="discharge-confirm-patient-name" style="font-weight: 700; color: #1e293b;"></span>?<br>
                 This action will finalize the patient's treatment record.
             </p>
             <div class="logout-modal-actions">
                 <button class="logout-btn-no" onclick="closeDischargeConfirmModal()">Cancel</button>
-                <button class="logout-btn-yes" id="btn-confirm-discharge-action"
-                    style="background: linear-gradient(135deg, #20bf6b 0%, #01baef 100%); box-shadow: 0 8px 16px -4px rgba(32, 191, 107, 0.4);">Confirm</button>
+                <button class="logout-btn-yes" id="btn-confirm-discharge-action" style="background: linear-gradient(135deg, #20bf6b 0%, #01baef 100%); box-shadow: 0 8px 16px -4px rgba(32, 191, 107, 0.4);">Confirm</button>
             </div>
         </div>
     </div>
@@ -588,7 +586,7 @@
                         </div>
                         <label for="avatar-upload"
                             style="position: absolute; bottom: 0; right: 0; background: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); border: 1px solid #e2e8f0; z-index: 10;">
-                            <i class="fas fa-camera" style="font-size: 12px; color: #64748b;"></i>
+                            <i class="bi bi-camera" style="font-size: 12px; color: #64748b;"></i>
                         </label>
                         <input type="file" id="avatar-upload" style="display: none;" accept="image/*"
                             onchange="previewAvatar(event)">
@@ -608,32 +606,56 @@
             <div class="modal-body" style="padding-top: 20px;">
                 <div class="profile-info-grid"
                     style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: 12px;">
-                    <div>
                         <label
-                            style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Username</label>
-                        <p id="profile-username" style="margin: 5px 0 0; font-weight: 600; color: #1e293b;">admin</p>
-                    </div>
-                    <div>
-                        <label
-                            style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Email</label>
+                            style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Email (Login ID)</label>
                         <p id="profile-email" style="margin: 5px 0 0; font-weight: 600; color: #1e293b;">
                             admin@hospital.com</p>
+                    <div>
+                        <label
+                            style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700;">Role</label>
+                        <p id="profile-role-display" style="margin: 5px 0 0; font-weight: 600; color: #1e293b;">Admin</p>
                     </div>
                 </div>
 
                 <h4
                     style="margin: 0 0 15px; font-size: 14px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-key" style="font-size: 12px; color: var(--primary);"></i> Change Password
+                    <i class="bi bi-key" style="font-size: 12px; color: var(--primary);"></i> Change Password
                 </h4>
 
                 <form id="profile-form" onsubmit="event.preventDefault(); saveProfileChanges();">
-                    <div class="form-group">
-                        <label>Current Password</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="password" id="profile-current-password" placeholder="Enter current password"
-                                required style="flex: 1;">
-                            <button type="button" class="btn-secondary" onclick="checkCurrentPassword()"
-                                id="verify-pw-btn" style="padding: 0 15px; border-radius: 50px;">Verify</button>
+                    <div id="profile-password-auth-container">
+                        <!-- Current Password Group -->
+                        <div id="profile-current-pw-group" class="form-group">
+                            <label>Current Password</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="password" id="profile-current-password" placeholder="Enter current password"
+                                    required style="flex: 1;">
+                                <button type="button" class="btn-secondary" onclick="checkCurrentPassword()"
+                                    id="verify-pw-btn" style="padding: 0 15px; border-radius: 50px;">Verify</button>
+                            </div>
+                            <div style="margin-top: 6px; text-align: right;">
+                                <a href="#" onclick="toggleProfileAuthMode('otp'); event.preventDefault();" id="profile-forgot-pw-link" 
+                                   style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500;">
+                                    Forgot current password?
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- OTP Verification Group (Initially Hidden) -->
+                        <div id="profile-otp-group" class="form-group" style="display: none;">
+                            <label>Verification Code (OTP) sent to email</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" id="profile-otp-input" placeholder="Enter 6-digit OTP" style="flex: 1;">
+                                <button type="button" class="btn-secondary" onclick="verifyProfileOtp()"
+                                    id="verify-profile-otp-btn" style="padding: 0 15px; border-radius: 50px;">Verify Code</button>
+                            </div>
+                            <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                <span id="profile-otp-timer" style="font-size: 11px; color: #64748b;"></span>
+                                <a href="#" onclick="toggleProfileAuthMode('password'); event.preventDefault();" 
+                                   style="font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500;">
+                                    Use current password
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -658,6 +680,97 @@
             </div>
         </div>
     </div>
+
+    <!-- ==================== IMAGE LIGHTBOX VIEWER (WhatsApp/Instagram Style) ==================== -->
+    <div id="image-lightbox" onclick="closeLightbox(event)" style="
+        display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        z-index: 99999; align-items: center; justify-content: center; cursor: zoom-out;
+        opacity: 0; transition: opacity 0.3s ease;
+    ">
+        <!-- Close Button -->
+        <button onclick="closeLightbox(event)" style="
+            position: absolute; top: 20px; right: 25px; background: rgba(255,255,255,0.15);
+            border: none; color: white; font-size: 28px; width: 44px; height: 44px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; backdrop-filter: blur(8px); transition: all 0.2s ease;
+            z-index: 100000;
+        " onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='scale(1)'"
+        >&times;</button>
+
+        <!-- User Name Label -->
+        <div id="lightbox-label" style="
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            color: white; font-size: 15px; font-weight: 600; background: rgba(0,0,0,0.5);
+            padding: 8px 20px; border-radius: 20px; backdrop-filter: blur(8px);
+            letter-spacing: 0.3px; max-width: 80%; text-align: center; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        "></div>
+
+        <!-- Image Container -->
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 60px;">
+            <img id="lightbox-img" src="" alt="Profile Photo" style="
+                max-width: 90vw; max-height: 80vh; object-fit: contain;
+                border-radius: 8px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+                transform: scale(0.8); transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+                cursor: default; user-select: none;
+            ">
+        </div>
+    </div>
+
+    <script>
+    // ==================== LIGHTBOX FUNCTIONS ====================
+    function openLightbox(imgSrc, label) {
+        if (!imgSrc) return;
+        const overlay = document.getElementById('image-lightbox');
+        const img = document.getElementById('lightbox-img');
+        const labelEl = document.getElementById('lightbox-label');
+
+        img.src = imgSrc;
+        labelEl.textContent = label || '';
+        labelEl.style.display = label ? 'block' : 'none';
+
+        overlay.style.display = 'flex';
+        // Trigger reflow for animation
+        void overlay.offsetWidth;
+        overlay.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(e) {
+        // Don't close if clicking on the image itself
+        if (e && e.target && e.target.id === 'lightbox-img') return;
+
+        const overlay = document.getElementById('image-lightbox');
+        const img = document.getElementById('lightbox-img');
+
+        overlay.style.opacity = '0';
+        img.style.transform = 'scale(0.8)';
+
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            img.src = '';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const overlay = document.getElementById('image-lightbox');
+            if (overlay && overlay.style.display === 'flex') {
+                closeLightbox(e);
+            }
+        }
+    });
+
+    // Make it globally available
+    window.openLightbox = openLightbox;
+    window.closeLightbox = closeLightbox;
+    </script>
 
     <!-- JavaScript Files -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

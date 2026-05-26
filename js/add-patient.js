@@ -9,13 +9,13 @@ function renderAddPatient() {
             <div class="module-header">
                 <h2>Admit New Patient</h2>
                 <button class="btn" onclick="showModule('patients')">
-                    <i class="fas fa-arrow-left"></i> Back
+                    <i class="bi bi-arrow-left"></i> Back
                 </button>
             </div>
             
             <form id="patient-form" class="patient-form" onsubmit="event.preventDefault(); addPatient();">
                 <div class="form-section">
-                    <h3><i class="fas fa-user"></i> Patient Details</h3>
+                    <h3><i class="bi bi-person"></i> Patient Details</h3>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Full Name *</label>
@@ -56,7 +56,7 @@ function renderAddPatient() {
                 </div>
                 
                 <div class="form-section">
-                    <h3><i class="fas fa-home"></i> Address</h3>
+                    <h3><i class="bi bi-house"></i> Address</h3>
                     <div class="form-group">
                         <label>Full Address *</label>
                         <textarea rows="2" id="p-address" required placeholder="Village, Post, District, State"></textarea>
@@ -64,7 +64,7 @@ function renderAddPatient() {
                 </div>
                 
                 <div class="form-section">
-                    <h3><i class="fas fa-stethoscope"></i> Medical Info</h3>
+                    <h3><i class="bi bi-activity"></i> Medical Info</h3>
                     <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
                         <div class="form-group">
                             <label>Condition / Problem</label>
@@ -81,10 +81,10 @@ function renderAddPatient() {
                 
                 <div class="form-actions">
                     <button type="submit" class="btn-primary">
-                        <i class="fas fa-user-plus"></i> Admit Patient
+                        <i class="bi bi-person-plus"></i> Admit Patient
                     </button>
                     <button type="reset" class="btn">
-                        <i class="fas fa-redo"></i> Reset
+                        <i class="bi bi-arrow-repeat"></i> Reset
                     </button>
                 </div>
             </form>

@@ -12,7 +12,7 @@ function renderDailyNotes() {
             <!-- Header & Search -->
             <div class="register-header">
                 <div class="header-left">
-                    <h2><i class="fas fa-book-medical"></i> Clinical Patient Register</h2>
+                    <h2><i class="bi bi-journal-medical"></i> Clinical Patient Register</h2>
                 </div>
                 <div class="header-controls">
                     <div class="patient-selector">
@@ -21,7 +21,7 @@ function renderDailyNotes() {
                         <div id="patient-dropdown" class="autocomplete-dropdown" style="display:none;"></div>
                     </div>
                     <button id="btn-add-vitals" class="btn-add-observation" style="display:none;" onclick="openVitalsModal()">
-                        <i class="fas fa-plus"></i> Add New Observation
+                        <i class="bi bi-plus-lg"></i> Add New Observation
                     </button>
                 </div>
             </div>
@@ -58,7 +58,7 @@ function renderDailyNotes() {
                 <!-- 2. MEDICATION MANAGEMENT SECTION -->
                 <div class="register-section">
                     <div class="section-title compact-title">
-                        <h3><i class="fas fa-pills"></i> Medication Schedule</h3>
+                        <h3><i class="bi bi-capsule"></i> Medication Schedule</h3>
                     </div>
                     
                     <!-- Medication Form (Hidden if not doctor) -->
@@ -91,7 +91,7 @@ function renderDailyNotes() {
                                     <input type="text" id="med-dose" placeholder="1g / 500mg" required class="compact-input">
                                 </div>
                                 <div class="input-group btn-group align-bottom">
-                                    <button type="submit" class="btn-prescribe"><i class="fas fa-prescription"></i> Prescribe</button>
+                                    <button type="submit" class="btn-prescribe"><i class="bi bi-file-earmark-medical"></i> Prescribe</button>
                                 </div>
                             </div>
                         </form>
@@ -126,7 +126,7 @@ function renderDailyNotes() {
         <div id="vitals-modal" class="modal" style="display: none;">
             <div class="modal-content vitals-modal-content">
                 <div class="modal-header compact-modal-header">
-                    <h3><i class="fas fa-heartbeat"></i> Add Observation</h3>
+                    <h3><i class="bi bi-activity"></i> Add Observation</h3>
                     <button class="modal-close" onclick="closeVitalsModal()">&times;</button>
                 </div>
                 <div class="modal-body compact-modal-body">
@@ -392,8 +392,8 @@ function renderMedicationTable(meds) {
         const isPending = m.status === 'Pending';
         const statusBadgeClass = isPending ? 'badge-pending' : 'badge-given';
         const actButton = isPending
-            ? `<button class="btn-mark-done" onclick="promptMarkDose('${m._id}')"><i class="fas fa-check-circle"></i> Mark Given</button>`
-            : `<span class="text-success" style="font-weight:700;"><i class="fas fa-check-double"></i> Done</span>`;
+            ? `<button class="btn-mark-done" onclick="promptMarkDose('${m._id}')"><i class="bi bi-check-circle"></i> Mark Given</button>`
+            : `<span class="text-success" style="font-weight:700;"><i class="bi bi-check-all"></i> Done</span>`;
         const doneDetails = isPending ? '-' : `<small style="font-size:11px; color:var(--text-muted);">${m.doneBy}<br>${m.doneTime}</small>`;
         tr.innerHTML = `
             <td>${m.date}</td>

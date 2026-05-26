@@ -182,10 +182,10 @@ function renderReports() {
             <div class="module-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                 <h2 style="font-size: 28px; font-weight: 800; color: var(--text-main); margin: 0; position: relative; padding-left: 15px; display: flex; align-items: center; gap: 8px;">
                     <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 24px; width: 4px; background: var(--primary); border-radius: 4px;"></span>
-                    <i class="fas fa-chart-line" style="color: var(--primary);"></i> Reports & Analytics Dashboard
+                    <i class="bi bi-graph-up" style="color: var(--primary);"></i> Reports & Analytics Dashboard
                 </h2>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="updateReportsDashboard()"><i class="fas fa-sync"></i> Refresh Live</button>
+                    <button class="btn btn-primary" onclick="updateReportsDashboard()"><i class="bi bi-arrow-repeat"></i> Refresh Live</button>
                     <button class="btn btn-info" onclick="
                         const adf = document.getElementById('auto-date-field-rep');
                         const atf = document.getElementById('auto-time-field-rep');
@@ -204,14 +204,14 @@ function renderReports() {
                             atf.textContent = \`\${hours}:\${minutes} \${ampm}\`;
                         }
                         window.print();
-                    "><i class="fas fa-print"></i> Print Report</button>
+                    "><i class="bi bi-printer"></i> Print Report</button>
                 </div>
             </div>
             
             <!-- Filters Bar -->
             <div class="filter-bar">
                 <div class="filter-bar-group">
-                    <label for="report-date-filter"><i class="far fa-calendar-alt"></i> Date Range</label>
+                    <label for="report-date-filter"><i class="bi bi-calendar3"></i> Date Range</label>
                     <select id="report-date-filter" class="filter-bar-select" onchange="updateReportsDashboard()">
                         <option value="all">All Time</option>
                         <option value="today">Today</option>
@@ -220,7 +220,7 @@ function renderReports() {
                     </select>
                 </div>
                 <div class="filter-bar-group">
-                    <label for="report-patient-filter"><i class="fas fa-user-injured"></i> Patient Type</label>
+                    <label for="report-patient-filter"><i class="bi bi-person"></i> Patient Type</label>
                     <select id="report-patient-filter" class="filter-bar-select" onchange="updateReportsDashboard()">
                         <option value="all">All Patients</option>
                         <option value="surgery">Surgery Patients</option>
@@ -237,25 +237,25 @@ function renderReports() {
             <!-- Charts Grid -->
             <div class="reports-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap:25px;">
                 <div class="report-card">
-                    <h3><i class="fas fa-chart-line" style="color:var(--primary, #4f46e5);"></i> Patient Enrollment Trends</h3>
+                    <h3><i class="bi bi-graph-up-arrow" style="color:var(--primary, #4f46e5);"></i> Patient Enrollment Trends</h3>
                     <div class="chart-container" style="height:280px; position:relative;">
                         <canvas id="patientGrowthChart"></canvas>
                     </div>
                 </div>
                 <div class="report-card" id="revenue-card-container">
-                    <h3><i class="fas fa-chart-bar" style="color:var(--success, #10b981);"></i> Financial Revenue Collection</h3>
+                    <h3><i class="bi bi-bar-chart" style="color:var(--success, #10b981);"></i> Financial Revenue Collection</h3>
                     <div class="chart-container" style="height:280px; position:relative;">
                         <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
                 <div class="report-card" id="payment-card-container">
-                    <h3><i class="fas fa-chart-pie" style="color:var(--danger, #ef4444);"></i> Outstanding vs Paid Bills Breakdown</h3>
+                    <h3><i class="bi bi-pie-chart" style="color:var(--danger, #ef4444);"></i> Outstanding vs Paid Bills Breakdown</h3>
                     <div class="chart-container" style="height:280px; position:relative;">
                         <canvas id="paymentStatusChart"></canvas>
                     </div>
                 </div>
                 <div class="report-card">
-                    <h3><i class="fas fa-procedures" style="color:#8b5cf6;"></i> Patient Category Mix</h3>
+                    <h3><i class="bi bi-hospital" style="color:#8b5cf6;"></i> Patient Category Mix</h3>
                     <div class="chart-container" style="height:280px; position:relative;">
                         <canvas id="surgeryNormalChart"></canvas>
                     </div>
@@ -404,7 +404,7 @@ async function updateReportsDashboard() {
         metricsEl.innerHTML = `
             <div class="stat-card blue">
                 <div class="stat-card-icon">
-                    <i class="fas fa-users"></i>
+                    <i class="bi bi-people"></i>
                 </div>
                 <div class="stat-card-details">
                     <p class="stat-card-label">Total Patients</p>
@@ -419,39 +419,39 @@ async function updateReportsDashboard() {
             ${showFinancials ? `
             <div class="stat-card green">
                 <div class="stat-card-icon">
-                    <i class="fas fa-money-bill-wave"></i>
+                    <i class="bi bi-cash-stack"></i>
                 </div>
                 <div class="stat-card-details">
                     <p class="stat-card-label">Revenue Collected</p>
                     <h3 class="stat-card-value">${currency}${metrics.totalRevenue.toLocaleString()}</h3>
                     <div class="stat-card-subtext" style="color:#10b981;">
-                        <i class="fas fa-check-circle"></i> ${metrics.paidBillsCount} Paid Bills
+                        <i class="bi bi-check-circle"></i> ${metrics.paidBillsCount} Paid Bills
                     </div>
                 </div>
             </div>
             
             <div class="stat-card red">
                 <div class="stat-card-icon">
-                    <i class="fas fa-file-invoice-dollar"></i>
+                    <i class="bi bi-receipt"></i>
                 </div>
                 <div class="stat-card-details">
                     <p class="stat-card-label">Pending Balance</p>
                     <h3 class="stat-card-value">${currency}${metrics.totalPendingAmount.toLocaleString()}</h3>
                     <div class="stat-card-subtext" style="color:#ef4444;">
-                        <i class="fas fa-exclamation-circle"></i> ${metrics.pendingBillsCount} Unpaid
+                        <i class="bi bi-exclamation-circle"></i> ${metrics.pendingBillsCount} Unpaid
                     </div>
                 </div>
             </div>` : ''}
             
             <div class="stat-card purple">
                 <div class="stat-card-icon">
-                    <i class="fas fa-procedures"></i>
+                    <i class="bi bi-hospital"></i>
                 </div>
                 <div class="stat-card-details">
                     <p class="stat-card-label">Surgery Patients</p>
                     <h3 class="stat-card-value">${metrics.surgeryPatientsCount}</h3>
                     <div class="stat-card-subtext" style="color:#8b5cf6;">
-                        <i class="fas fa-notes-medical"></i> Consent Done
+                        <i class="bi bi-file-earmark-medical"></i> Consent Done
                     </div>
                 </div>
             </div>
@@ -474,7 +474,7 @@ function renderCharts(filteredPatients, metrics, showFinancials) {
     if (metrics.totalPatients === 0) {
         // Show high quality no data visualizer
         containers.forEach(c => {
-            c.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#94a3b8; font-weight:700; font-size:14px;"><i class="fas fa-info-circle" style="margin-right:6px;"></i> No analytics data in this range</div>';
+            c.innerHTML = '<div style="display:flex; height:100%; align-items:center; justify-content:center; color:#94a3b8; font-weight:700; font-size:14px;"><i class="bi bi-info-circle" style="margin-right:6px;"></i> No analytics data in this range</div>';
         });
         reportsCharts = {};
         return;

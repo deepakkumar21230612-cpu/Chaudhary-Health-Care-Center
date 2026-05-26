@@ -1,67 +1,91 @@
 const nodemailer = require('nodemailer');
 const Setting = require('../models/Setting');
 
+// ==================== CACHED TRANSPORTER ====================
+// Cache the transporter so we don't hit DB on every single email
+let cachedTransporter = null;
+let cachedFromLine = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 5 * 60 * 1000; // Refresh cache every 5 minutes
+
 /**
- * Dynamically configure and get nodemailer transporter based on current DB Settings or env.
+ * Get or create a cached nodemailer transporter.
+ * Settings are fetched from DB only once every 5 minutes.
  */
 async function getTransporter() {
+    const now = Date.now();
+
+    // Return cached transporter if still valid
+    if (cachedTransporter && (now - cacheTimestamp) < CACHE_TTL) {
+        return { transporter: cachedTransporter, fromLine: cachedFromLine };
+    }
+
     let host = process.env.EMAIL_HOST || 'smtp.gmail.com';
     let port = parseInt(process.env.EMAIL_PORT) || 587;
-    let user = process.env.EMAIL_USER || 'dk21230621@gmail.com';
+    let user = process.env.EMAIL_USER;
     let pass = process.env.EMAIL_PASS;
+    let systemName = 'Chaudhary Health Care';
 
     try {
-        const hostSetting = await Setting.findOne({ key: 'email-host' });
-        const portSetting = await Setting.findOne({ key: 'email-port' });
-        const userSetting = await Setting.findOne({ key: 'email-user' });
-        const passSetting = await Setting.findOne({ key: 'email-pass' });
+        // Single bulk query instead of 5 separate queries
+        const settings = await Setting.find({
+            key: { $in: ['email-host', 'email-port', 'email-user', 'email-pass', 'hospital-name'] }
+        }).lean();
 
-        if (hostSetting && hostSetting.value) host = hostSetting.value;
-        if (portSetting && portSetting.value) port = parseInt(portSetting.value) || 587;
-        if (userSetting && userSetting.value) user = userSetting.value;
-        if (passSetting && passSetting.value) pass = passSetting.value;
+        const settingsMap = {};
+        settings.forEach(s => { settingsMap[s.key] = s.value; });
+
+        if (settingsMap['email-host']) host = settingsMap['email-host'];
+        if (settingsMap['email-port']) port = parseInt(settingsMap['email-port']) || 587;
+        if (settingsMap['email-user']) user = settingsMap['email-user'];
+        if (settingsMap['email-pass']) pass = settingsMap['email-pass'];
+        if (settingsMap['hospital-name']) systemName = settingsMap['hospital-name'];
     } catch (err) {
         console.error('Error fetching email settings from DB:', err.message);
     }
 
     if (!pass) {
-        // Log a warning but create a dummy transporter or rely on nodemailer's fail logic
         console.warn('SMTP password is not configured. Email sending might fail.');
     }
 
-    // Determine secure connection
     const secure = port === 465;
 
-    return nodemailer.createTransport({
+    cachedTransporter = nodemailer.createTransport({
         host,
         port,
         secure,
-        auth: {
-            user,
-            pass
-        }
+        auth: { user, pass },
+        // Connection pooling for faster subsequent sends
+        pool: true,
+        maxConnections: 3,
+        maxMessages: 50,
+        // Faster timeouts
+        connectionTimeout: 5000,
+        greetingTimeout: 5000,
+        socketTimeout: 10000
     });
+
+    cachedFromLine = `"${systemName}" <${user}>`;
+    cacheTimestamp = now;
+
+    // Verify connection on first creation (non-blocking)
+    cachedTransporter.verify().then(() => {
+        console.log('✅ SMTP Connection verified successfully');
+    }).catch(err => {
+        console.warn('⚠️ SMTP Connection verification failed:', err.message);
+    });
+
+    return { transporter: cachedTransporter, fromLine: cachedFromLine };
 }
 
 /**
- * Send an email with helper parameters
+ * Send an email — now uses cached transporter (no DB hit on every call)
  */
 async function sendEmail({ to, subject, html }) {
-    const transporter = await getTransporter();
-    
-    // Fetch system display name
-    let systemName = 'Chaudhary Health Care';
-    let emailUser = process.env.EMAIL_USER || 'dk21230621@gmail.com';
-    try {
-        const nameSetting = await Setting.findOne({ key: 'hospital-name' });
-        if (nameSetting && nameSetting.value) systemName = nameSetting.value;
-        
-        const userSetting = await Setting.findOne({ key: 'email-user' });
-        if (userSetting && userSetting.value) emailUser = userSetting.value;
-    } catch (err) {}
+    const { transporter, fromLine } = await getTransporter();
 
     const mailOptions = {
-        from: `"${systemName}" <${emailUser}>`,
+        from: fromLine,
         to,
         subject,
         html
@@ -162,10 +186,21 @@ async function sendDischargeEmail(to, patientData, summary) {
     return sendEmail({ to, subject: `Discharge Confirmation: ${patientData.name} (${patientData.patient_id})`, html });
 }
 
+/**
+ * Force refresh the cached transporter (useful when settings change from admin panel)
+ */
+function clearTransporterCache() {
+    cachedTransporter = null;
+    cachedFromLine = null;
+    cacheTimestamp = 0;
+    console.log('SMTP transporter cache cleared.');
+}
+
 module.exports = {
     sendEmail,
     sendOtpEmail,
     sendAdmissionEmail,
     sendDischargeEmail,
-    getTransporter
+    getTransporter,
+    clearTransporterCache
 };

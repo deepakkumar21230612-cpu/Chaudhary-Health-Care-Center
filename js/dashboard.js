@@ -11,8 +11,8 @@ function renderDashboard() {
 
     // Role-specific greeting subtitle
     const roleSubtitle = {
-        'admin': 'System Administrator Dashboard',
-        'doctor': 'Clinical Dashboard — Patient Overview',
+        'admin': 'System Administrator Home',
+        'doctor': 'Clinical Home — Patient Overview',
         'staff': 'Nursing Station — Shift Overview',
         'receptionist': 'Front Desk — Admissions Overview'
     };
@@ -20,21 +20,21 @@ function renderDashboard() {
     // Role-specific quick actions
     const roleQuickActions = {
         'doctor': `
-            <button class="action-btn" onclick="showModule('add-patient')"><i class="fas fa-user-plus"></i><br>Admit</button>
-            <button class="action-btn" onclick="showModule('patients')"><i class="fas fa-users"></i><br>Patients</button>
-            <button class="action-btn" onclick="showModule('daily-notes')"><i class="fas fa-notes-medical"></i><br>Notes</button>
-            <button class="action-btn" onclick="showModule('discharge')"><i class="fas fa-sign-out-alt"></i><br>Discharge</button>
-            <button class="action-btn" onclick="showModule('billing')"><i class="fas fa-file-invoice"></i><br>Billing</button>
-            <button class="action-btn" onclick="showModule('patient-record')"><i class="fas fa-file-medical"></i><br>Records</button>
+            <button class="action-btn" onclick="showModule('add-patient')"><i class="bi bi-person-plus"></i><br>Admit</button>
+            <button class="action-btn" onclick="showModule('patients')"><i class="bi bi-people"></i><br>Patients</button>
+            <button class="action-btn" onclick="showModule('daily-notes')"><i class="bi bi-file-earmark-text"></i><br>Notes</button>
+            <button class="action-btn" onclick="showModule('discharge')"><i class="bi bi-box-arrow-right"></i><br>Discharge</button>
+            <button class="action-btn" onclick="showModule('billing')"><i class="bi bi-receipt"></i><br>Billing</button>
+            <button class="action-btn" onclick="showModule('patient-record')"><i class="bi bi-file-earmark-medical"></i><br>Records</button>
         `,
         'staff': `
-            <button class="action-btn" onclick="showModule('add-patient')"><i class="fas fa-user-plus"></i><br>Admit</button>
-            <button class="action-btn" onclick="showModule('patients')"><i class="fas fa-users"></i><br>Patients</button>
-            <button class="action-btn" onclick="showModule('daily-notes')"><i class="fas fa-notes-medical"></i><br>Notes</button>
+            <button class="action-btn" onclick="showModule('add-patient')"><i class="bi bi-person-plus"></i><br>Admit</button>
+            <button class="action-btn" onclick="showModule('patients')"><i class="bi bi-people"></i><br>Patients</button>
+            <button class="action-btn" onclick="showModule('daily-notes')"><i class="bi bi-file-earmark-text"></i><br>Notes</button>
         `,
         'receptionist': `
-            <button class="action-btn" onclick="showModule('add-patient')"><i class="fas fa-user-plus"></i><br>New Admission</button>
-            <button class="action-btn" onclick="showModule('patients')"><i class="fas fa-users"></i><br>Patient List</button>
+            <button class="action-btn" onclick="showModule('add-patient')"><i class="bi bi-person-plus"></i><br>New Admission</button>
+            <button class="action-btn" onclick="showModule('patients')"><i class="bi bi-people"></i><br>Patient List</button>
         `
     };
 
@@ -43,7 +43,7 @@ function renderDashboard() {
         'doctor': `
             <div class="role-info-panel">
                 <div class="info-panel-card doctor-panel">
-                    <div class="info-panel-header"><i class="fas fa-stethoscope"></i><h4>Clinical Summary</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-activity"></i><h4>Clinical Summary</h4></div>
                     <div class="info-panel-body">
                         <div class="info-row"><span class="info-label">Doctor</span><span class="info-value">${currentUser?.name || 'Doctor'}</span></div>
                         <div class="info-row"><span class="info-label">Active Patients</span><span class="info-value" id="doc-active-count">—</span></div>
@@ -52,7 +52,7 @@ function renderDashboard() {
                     </div>
                 </div>
                 <div class="info-panel-card bed-panel">
-                    <div class="info-panel-header"><i class="fas fa-bed"></i><h4>Bed Occupancy</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-hospital"></i><h4>Bed Occupancy</h4></div>
                     <div class="info-panel-body" id="bed-occupancy-display">
                         <div style="text-align:center; padding:10px; color:#94a3b8; font-size:12px;">Loading...</div>
                     </div>
@@ -61,16 +61,16 @@ function renderDashboard() {
         'staff': `
             <div class="role-info-panel">
                 <div class="info-panel-card staff-panel">
-                    <div class="info-panel-header"><i class="fas fa-clipboard-check"></i><h4>Shift Overview</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-clipboard-check"></i><h4>Shift Overview</h4></div>
                     <div class="info-panel-body">
                         <div class="info-row"><span class="info-label">On Duty</span><span class="info-value">${currentUser?.name || 'Staff'}</span></div>
-                        <div class="info-row"><span class="info-label">Date</span><span class="info-value">${new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span></div>
+                        <div class="info-row"><span class="info-label">Date</span><span class="info-value">${new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'})}</span></div>
                         <div class="info-row"><span class="info-label">Active Patients</span><span class="info-value" id="staff-active-count">—</span></div>
                         <div class="info-row"><span class="info-label">Notes Pending</span><span class="info-value" style="color:#f59e0b;">Check Daily Notes</span></div>
                     </div>
                 </div>
                 <div class="info-panel-card bed-panel">
-                    <div class="info-panel-header"><i class="fas fa-bed"></i><h4>Bed Occupancy</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-hospital"></i><h4>Bed Occupancy</h4></div>
                     <div class="info-panel-body" id="bed-occupancy-display">
                         <div style="text-align:center; padding:10px; color:#94a3b8; font-size:12px;">Loading...</div>
                     </div>
@@ -79,16 +79,16 @@ function renderDashboard() {
         'receptionist': `
             <div class="role-info-panel">
                 <div class="info-panel-card reception-panel">
-                    <div class="info-panel-header"><i class="fas fa-concierge-bell"></i><h4>Front Desk Status</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-bell"></i><h4>Front Desk Status</h4></div>
                     <div class="info-panel-body">
                         <div class="info-row"><span class="info-label">Receptionist</span><span class="info-value">${currentUser?.name || 'Receptionist'}</span></div>
-                        <div class="info-row"><span class="info-label">Date</span><span class="info-value">${new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</span></div>
+                        <div class="info-row"><span class="info-label">Date</span><span class="info-value">${new Date().toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'})}</span></div>
                         <div class="info-row"><span class="info-label">Today's Admissions</span><span class="info-value" id="rec-today-admissions">—</span></div>
                         <div class="info-row"><span class="info-label">Total Patients</span><span class="info-value" id="rec-total-patients">—</span></div>
                     </div>
                 </div>
                 <div class="info-panel-card bed-panel">
-                    <div class="info-panel-header"><i class="fas fa-bed"></i><h4>Bed Availability</h4></div>
+                    <div class="info-panel-header"><i class="bi bi-hospital"></i><h4>Bed Availability</h4></div>
                     <div class="info-panel-body" id="bed-occupancy-display">
                         <div style="text-align:center; padding:10px; color:#94a3b8; font-size:12px;">Loading...</div>
                     </div>
@@ -133,15 +133,15 @@ function renderDashboard() {
             ${showCharts ? `
             <div id="admin-charts-section" class="charts-grid">
                 <div class="report-card card" style="background:white; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
-                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="fas fa-chart-line" style="color:#3498db;"></i> Patient Growth</h3>
+                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="bi bi-graph-up-arrow" style="color:#3498db;"></i> Patient Growth</h3>
                     <div style="height:200px; position:relative;"><canvas id="dashPatientChart"></canvas></div>
                 </div>
                 <div class="report-card card" style="background:white; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
-                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="fas fa-chart-bar" style="color:#2ecc71;"></i> Revenue Streams</h3>
+                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="bi bi-bar-chart" style="color:#2ecc71;"></i> Revenue Streams</h3>
                     <div style="height:200px; position:relative;"><canvas id="dashRevenueChart"></canvas></div>
                 </div>
                 <div class="report-card card" style="background:white; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
-                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="fas fa-chart-pie" style="color:#f1c40f;"></i> Payment Status</h3>
+                    <h3 style="margin-bottom:10px; font-size:14px;"><i class="bi bi-pie-chart" style="color:#f1c40f;"></i> Payment Status</h3>
                     <div style="height:200px; position:relative;"><canvas id="dashPaymentChart"></canvas></div>
                 </div>
             </div>` : ''}
@@ -149,7 +149,7 @@ function renderDashboard() {
             <div class="dashboard-lower">
                 <div class="recent-activity">
                     <h3 style="margin-bottom:12px; font-size:14px; border-bottom:1px solid #eee; padding-bottom:8px;">
-                        <i class="fas fa-history" style="color:#8b5cf6;"></i> ${role === 'doctor' ? "Today's Activity" : "Recent Activity"}
+                        <i class="bi bi-clock-history" style="color:#8b5cf6;"></i> ${role === 'doctor' ? "Today's Activity" : "Recent Activity"}
                     </h3>
                     <div class="activity-list" id="recent-activity-list" style="max-height: 220px; overflow-y: auto;">
                         <div style="text-align:center; padding:15px; color:#94a3b8; font-size:12px;">Loading...</div>
@@ -158,14 +158,14 @@ function renderDashboard() {
                 
                 <div class="quick-actions">
                     <h3 style="margin-bottom:12px; font-size:14px; border-bottom:1px solid #eee; padding-bottom:8px;">
-                        <i class="fas fa-bolt" style="color:#f59e0b;"></i> Quick Actions
+                        <i class="bi bi-lightning-charge" style="color:#f59e0b;"></i> Quick Actions
                     </h3>
                     <div class="action-buttons">
                         ${role === 'admin' ? `
-                        <button class="action-btn" onclick="showModule('add-patient')"><i class="fas fa-user-plus"></i><br>Add Patient</button>
-                        <button class="action-btn" onclick="showModule('billing')"><i class="fas fa-file-invoice"></i><br>Billing</button>
-                        <button class="action-btn" onclick="showModule('discharge')"><i class="fas fa-sign-out-alt"></i><br>Discharge</button>
-                        <button class="action-btn" onclick="showModule('patients')"><i class="fas fa-users"></i><br>Patients</button>
+                        <button class="action-btn" onclick="showModule('add-patient')"><i class="bi bi-person-plus"></i><br>Add Patient</button>
+                        <button class="action-btn" onclick="showModule('billing')"><i class="bi bi-receipt"></i><br>Billing</button>
+                        <button class="action-btn" onclick="showModule('discharge')"><i class="bi bi-box-arrow-right"></i><br>Discharge</button>
+                        <button class="action-btn" onclick="showModule('patients')"><i class="bi bi-people"></i><br>Patients</button>
                         ` : (roleQuickActions[role] || '')}
                     </div>
                 </div>
@@ -207,7 +207,7 @@ async function updateRolePanels(role) {
         const el1 = document.getElementById('doc-active-count');
         if (el1) el1.textContent = admitted.length;
         const el2 = document.getElementById('doc-discharged-today');
-        if (el2) el2.textContent = patients.filter(p => (p.status || '').toLowerCase() === 'discharged').length;
+        if (el2) el2.textContent = patients.filter(p => (p.status||'').toLowerCase() === 'discharged').length;
         const el3 = document.getElementById('doc-surgery-count');
         if (el3) el3.textContent = surgeries.length;
     }
@@ -232,7 +232,7 @@ async function updateRolePanels(role) {
         const femaleTotal = bedList.filter(b => b.startsWith('Female-G')).length || 20;
         const icuTotal = bedList.filter(b => b.startsWith('ICU-')).length || 7;
         const privateTotal = bedList.filter(b => b.startsWith('Private-')).length || 5;
-
+        
         const wards = {
             'General Male': { total: maleTotal, prefix: 'Male-G' },
             'General Female': { total: femaleTotal, prefix: 'Female-G' },
@@ -302,7 +302,7 @@ async function updateDashboardStats() {
     const totalPatients = patients.length;
     let admittedPatients = patients.filter(p => (p.status || '').toLowerCase() === 'admitted').length;
     let dischargedCount = patients.filter(p => (p.status || '').toLowerCase() === 'discharged').length;
-
+    
     if (admittedPatients < 0) admittedPatients = 0;
 
     let totalRevenue = 0;
@@ -319,7 +319,7 @@ async function updateDashboardStats() {
             allActivities.push({
                 time: new Date(dDate).getTime(),
                 text: `New patient added: ${p.name}`,
-                icon: 'fa-user-plus',
+                icon: 'bi-person-plus',
                 color: '#3498db'
             });
         }
@@ -333,7 +333,7 @@ async function updateDashboardStats() {
                 allActivities.push({
                     time: new Date(pay.date || Date.now()).getTime(),
                     text: `Payment ${window.currencySymbol || '₹'}${pay.amount} received from ${p.name}`,
-                    icon: 'fa-money-bill-wave',
+                    icon: 'bi-coin',
                     color: '#2ecc71'
                 });
             });
@@ -358,7 +358,7 @@ async function updateDashboardStats() {
         allActivities.push({
             time: new Date(s.date || Date.now()).getTime(),
             text: `Surgery recorded for ${pName}`,
-            icon: 'fa-procedures',
+            icon: 'bi-hospital',
             color: '#9b59b6'
         });
     });
@@ -369,7 +369,7 @@ async function updateDashboardStats() {
         allActivities.push({
             time: new Date(d.dischargeDate || Date.now()).getTime(),
             text: `Patient ${pName} discharged`,
-            icon: 'fa-sign-out-alt',
+            icon: 'bi-box-arrow-right',
             color: '#2ecc71'
         });
     });
@@ -382,21 +382,21 @@ async function updateDashboardStats() {
     // 1. Populate Metrics Cards
     document.getElementById('dashboard-metrics').innerHTML = `
         <div class="stat-card">
-            <i class="fas fa-users"></i>
+            <i class="bi bi-people"></i>
             <div>
                 <h3>${totalPatients}</h3>
                 <p>Total Patients</p>
             </div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-bed"></i>
+            <i class="bi bi-hospital"></i>
             <div>
                 <h3>${admittedPatients}</h3>
                 <p>Admitted</p>
             </div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-walking"></i>
+            <i class="bi bi-box-arrow-right"></i>
             <div>
                 <h3>${dischargedCount}</h3>
                 <p>Discharged</p>
@@ -404,21 +404,21 @@ async function updateDashboardStats() {
         </div>
         ${showFinancials ? `
         <div class="stat-card">
-            <i class="fas fa-coins"></i>
+            <i class="bi bi-coin"></i>
             <div>
                 <h3>${curr}${totalRevenue.toLocaleString()}</h3>
                 <p>Revenue</p>
             </div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-check-circle"></i>
+            <i class="bi bi-check-circle"></i>
             <div>
                 <h3>${paidBills}</h3>
                 <p>Paid Bills</p>
             </div>
         </div>
         <div class="stat-card">
-            <i class="fas fa-exclamation-circle"></i>
+            <i class="bi bi-exclamation-circle"></i>
             <div>
                 <h3>${pendingBills}</h3>
                 <p>Pending Bills</p>
@@ -445,7 +445,7 @@ async function updateDashboardStats() {
         actList.innerHTML = allActivities.slice(0, 6).map(act => `
             <div class="activity-item">
                 <div class="activity-icon" style="background:${act.color}15; color:${act.color};">
-                    <i class="fas ${act.icon}"></i>
+                    <i class="bi ${act.icon}"></i>
                 </div>
                 <div class="activity-info">
                     <div class="activity-text">${act.text}</div>

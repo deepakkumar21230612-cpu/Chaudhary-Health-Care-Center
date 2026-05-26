@@ -9,7 +9,7 @@ function renderPatients() {
             <div class="module-header">
                 <h2>Patient Management</h2>
                 <button class="add-patient-cta" onclick="showModule('add-patient')" id="btn-add-patient-cta">
-                    <span class="cta-icon-wrap"><i class="fas fa-user-plus"></i></span>
+                    <span class="cta-icon-wrap"><i class="bi bi-person-plus"></i></span>
                     <span class="cta-label">Add New Patient</span>
                     <span class="cta-shimmer"></span>
                 </button>
@@ -275,14 +275,14 @@ function viewPatient(patientId) {
         <div class="modal-content" style="max-width: 550px; padding: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
             <div class="modal-header" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); padding: 20px 25px; border-bottom: none;">
                 <h3 style="color: white; margin: 0; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-id-card"></i> Patient Overview
+                    <i class="bi bi-card-text"></i> Patient Overview
                 </h3>
                 <button class="modal-close" style="color: white; opacity: 0.8;" onclick="this.closest('.modal').remove()">&times;</button>
             </div>
             <div style="padding: 25px; background: #f8fafc; max-height: 80vh; overflow-y: auto;">
                 <div style="display: flex; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0;">
                     <div style="width: 65px; height: 65px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #a0aec0; margin-right: 20px;">
-                        <i class="fas ${gender.toLowerCase() === 'female' ? 'fa-female' : 'fa-male'}"></i>
+                        <i class="bi ${gender.toLowerCase() === 'female' ? 'bi-gender-female' : 'bi-gender-male'}"></i>
                     </div>
                     <div style="flex: 1;">
                         <h2 style="margin: 0 0 5px 0; color: #2d3748; font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
@@ -300,28 +300,28 @@ function viewPatient(patientId) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; margin-bottom: 8px;">
-                            <i class="fas fa-user-friends"></i> Guardian
+                            <i class="bi bi-people"></i> Guardian
                         </div>
                         <div style="color: #2d3748; font-weight: 600; font-size: 14px;">${guardian}</div>
                     </div>
 
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; margin-bottom: 8px;">
-                            <i class="fas fa-bed"></i> Bed Assignment
+                            <i class="bi bi-bed"></i> Bed Assignment
                         </div>
                         <div style="color: #2d3748; font-weight: 600; font-size: 14px;">${bed}</div>
                     </div>
 
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7; grid-column: 1 / -1;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; margin-bottom: 8px;">
-                            <i class="fas fa-map-marker-alt"></i> Address
+                            <i class="bi bi-geo-alt"></i> Address
                         </div>
                         <div style="color: #4a5568; font-size: 14px;">${address}</div>
                     </div>
 
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7; grid-column: 1 / -1;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; margin-bottom: 12px;">
-                            <i class="fas fa-stethoscope"></i> Medical Summary
+                            <i class="bi bi-activity"></i> Medical Summary
                         </div>
                         <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px 15px; font-size: 13px;">
                             <span style="color: #718096;">Condition:</span> <strong>${problem}</strong>
@@ -334,7 +334,7 @@ function viewPatient(patientId) {
                     ${surgeries.length > 0 ? `
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7; grid-column: 1 / -1; border-left: 4px solid #805ad5;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #805ad5; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                            <i class="fas fa-procedures"></i> Surgery History
+                            <i class="bi bi-hospital"></i> Surgery History
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             ${surgeries.map(s => `
@@ -424,7 +424,7 @@ function editPatient(patientId) {
         <div class="modal-content" style="max-width: 500px; padding: 0; border-radius: 15px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.3);">
             <div class="modal-header" style="background: #2d3748; padding: 15px 25px;">
                 <h3 style="color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-user-edit"></i> Edit Patient Details
+                    <i class="bi bi-pencil-square"></i> Edit Patient Details
                 </h3>
                 <button class="modal-close" style="color: white;" onclick="this.closest('.modal').remove()">&times;</button>
             </div>
@@ -473,7 +473,7 @@ function editPatient(patientId) {
                     
                     <div style="background: #edf2f7; padding: 15px; border-radius: 10px;">
                         <h4 style="margin: 0 0 10px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-bed"></i> Change Ward / Bed
+                            <i class="bi bi-bed"></i> Change Ward / Bed
                         </h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                             <div>
@@ -498,7 +498,7 @@ function editPatient(patientId) {
 
                     <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
                         <button type="submit" class="btn-primary" style="padding: 10px 40px; border-radius: 8px; font-weight: 700;">
-                            <i class="fas fa-save"></i> Save All Changes
+                            <i class="bi bi-floppy"></i> Save All Changes
                         </button>
                         <button type="button" class="btn" style="background:#f1f5f9;" onclick="this.closest('.modal').remove()">Cancel</button>
                     </div>
@@ -527,7 +527,7 @@ function openTransferBedModal(patientId) {
         <div class="modal-content" style="max-width: 450px; padding: 0; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.3);">
             <div class="modal-header" style="background: #4b5563; padding: 15px 25px;">
                 <h3 style="color: white; margin: 0; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-exchange-alt"></i> Transfer Bed
+                    <i class="bi bi-arrow-left-right"></i> Transfer Bed
                 </h3>
                 <button class="modal-close" style="color: white;" onclick="this.closest('.modal').remove()">&times;</button>
             </div>
@@ -552,7 +552,7 @@ function openTransferBedModal(patientId) {
 
                     <div style="display: flex; gap: 10px; justify-content: center;">
                         <button type="submit" class="btn-primary" style="padding: 10px 30px; border-radius: 8px; font-weight: 700; background: #4b5563;">
-                            <i class="fas fa-exchange-alt"></i> Confirm Transfer
+                            <i class="bi bi-arrow-left-right"></i> Confirm Transfer
                         </button>
                         <button type="button" class="btn" style="background:#f1f5f9;" onclick="this.closest('.modal').remove()">Cancel</button>
                     </div>
@@ -857,7 +857,7 @@ function deletePatient(patientId) {
         <div class="delete-modal-overlay" id="delete-overlay-bg">
             <div class="delete-modal-box" onclick="event.stopPropagation()">
                 <div class="delete-modal-header">
-                    <div class="delete-modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="delete-modal-icon"><i class="bi bi-exclamation-triangle"></i></div>
                     <h3 id="delete-modal-title">Delete Patient Record</h3>
                     <p id="delete-modal-subtitle">This action cannot be undone</p>
                 </div>
@@ -897,10 +897,10 @@ function deletePatient(patientId) {
 
                 <div class="delete-modal-footer">
                     <button class="delete-btn-cancel" onclick="document.getElementById('delete-confirm-modal').remove(); window._deleteStep=1;">
-                        <i class="fas fa-times" style="margin-right:6px;"></i>Cancel
+                        <i class="bi bi-x-lg" style="margin-right:6px;"></i>Cancel
                     </button>
                     <button class="delete-btn-proceed" id="delete-proceed-btn" onclick="handleDeleteStep('${patientId}')">
-                        <i class="fas fa-arrow-right" style="margin-right:6px;"></i>Yes, Proceed
+                        <i class="bi bi-arrow-right" style="margin-right:6px;"></i>Yes, Proceed
                     </button>
                 </div>
             </div>
@@ -933,7 +933,7 @@ function handleDeleteStep(patientId) {
 
         const proceedBtn = document.getElementById('delete-proceed-btn');
         proceedBtn.disabled = true;
-        proceedBtn.innerHTML = '<i class="fas fa-trash" style="margin-right:6px;"></i>Delete Permanently';
+        proceedBtn.innerHTML = '<i class="bi bi-trash" style="margin-right:6px;"></i>Delete Permanently';
 
         const input = document.getElementById('delete-confirm-input');
         input.focus();
@@ -1046,18 +1046,18 @@ function openSurgeryModal(patientId) {
         <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); border: 1px solid #cbd5e1;">
             <div class="modal-header" style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 16px 24px;">
                 <h3 style="margin: 0; font-size: 18px; color: #1e293b; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-procedures" style="color:#805ad5;"></i> Add Surgery Event & Operation Consent
+                    <i class="bi bi-hospital" style="color:#805ad5;"></i> Add Surgery Event & Operation Consent
                 </h3>
                 <button class="modal-close" style="font-size: 24px; color: #94a3b8; background: none; border: none; cursor: pointer;" onclick="window.stopSurgeryCameraStream(); this.closest('.modal').remove()">&times;</button>
             </div>
             <div style="padding: 24px;">
                 <p style="margin-top:0; color:#475569; font-size:14px; margin-bottom:20px; padding: 10px 14px; background: #f1f5f9; border-radius: 6px; border-left: 4px solid #6366f1;">
-                    <i class="fas fa-user-circle"></i> Recording surgery for patient: <strong style="color: #0f172a;">${patientObj ? patientObj.name : patientId}</strong>
+                    <i class="bi bi-person-circle"></i> Recording surgery for patient: <strong style="color: #0f172a;">${patientObj ? patientObj.name : patientId}</strong>
                 </p>
 
                 <!-- SECTION 1: SURGERY & DIAGNOSIS DETAILS -->
                 <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight:700;">
-                    <i class="fas fa-file-medical"></i> Surgery & Diagnosis Information
+                    <i class="bi bi-file-earmark-medical"></i> Surgery & Diagnosis Information
                 </h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
                     <div>
@@ -1097,7 +1097,7 @@ function openSurgeryModal(patientId) {
                 <!-- SECTION 2: HINDI CONSENT WARNING CALLOUT -->
                 <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 16px; margin-bottom: 24px; border-radius: 8px; font-size: 14px; color: #b45309; line-height: 1.6; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px; font-weight:700;">
-                        <i class="fas fa-hand-holding-medical" style="font-size:16px;"></i> 
+                        <i class="bi bi-heart-pulse" style="font-size:16px;"></i> 
                         <span>शल्य चिकित्सा एवं निश्चेतक हेतु सहमति (Operation Consent Form)</span>
                     </div>
                     मैं एतद्द्वारा अपने रोगी के किसी प्रकार के नैदानिक परीक्षण, उपचार एवं तद हेतु आवश्यक शल्य क्रिया व निश्चेतक औषधियों के प्रयोग की अनुमति देता / देती हूँ। मुझे इसके सभी संभावित परिणामों से अवगत करा दिया गया है।
@@ -1109,7 +1109,7 @@ function openSurgeryModal(patientId) {
                     <!-- WITNESS COLUMN -->
                     <div style="background: #f8fafc; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px;">
                         <h5 style="margin: 0 0 12px 0; font-size: 13px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display:flex; align-items:center; gap:6px; border-bottom:1px solid #cbd5e1; padding-bottom:6px; font-weight:700;">
-                            <i class="fas fa-user-shield"></i> साक्षी गवाह (Witness Details)
+                            <i class="bi bi-person-lock"></i> साक्षी गवाह (Witness Details)
                         </h5>
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div>
@@ -1136,7 +1136,7 @@ function openSurgeryModal(patientId) {
                     <!-- GUARDIAN COLUMN -->
                     <div style="background: #f8fafc; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px;">
                         <h5 style="margin: 0 0 12px 0; font-size: 13px; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display:flex; align-items:center; gap:6px; border-bottom:1px solid #cbd5e1; padding-bottom:6px; font-weight:700;">
-                            <i class="fas fa-signature"></i> रोगी से संबंधित हस्ताक्षरकर्ता (Guardian Details)
+                            <i class="bi bi-pencil"></i> रोगी से संबंधित हस्ताक्षरकर्ता (Guardian Details)
                         </h5>
                         <div style="display:flex; flex-direction:column; gap:10px;">
                             <div>
@@ -1163,7 +1163,7 @@ function openSurgeryModal(patientId) {
                 </div>
                 <!-- SECTION 4: SIGNATURE UPLOAD & WEBCAM CAPTURE SIDE-BY-SIDE -->
                 <h4 style="margin: 0 0 12px 0; font-size: 13px; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; font-weight:700;">
-                    <i class="fas fa-signature"></i> Patient Signature Proof
+                    <i class="bi bi-pencil"></i> Patient Signature Proof
                 </h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; align-items: start;">
                     
@@ -1177,10 +1177,10 @@ function openSurgeryModal(patientId) {
                         <div style="text-align: center;">
                             <label style="display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px; text-align:left;">Method 2: Take Instant Photo via Camera</label>
                             <button id="btn-surgery-camera" class="btn" style="background:#4f46e5; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.15);" onclick="window.startSurgeryCamera()">
-                                <i class="fas fa-camera"></i> 📷 Open Camera (कैमरा खोलें)
+                                <i class="bi bi-camera"></i> 📷 Open Camera (कैमरा खोलें)
                             </button>
                             <button id="btn-surgery-snap" class="btn" style="display:none; background:#10b981; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:600; font-size:13px; align-items:center; gap:6px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.15);" onclick="window.snapSurgeryPhoto()">
-                                <i class="fas fa-camera-retro"></i> 📸 Snap Photo (फ़ोटो खींचें)
+                                <i class="bi bi-camera-fill"></i> 📸 Snap Photo (फ़ोटो खींचें)
                             </button>
                         </div>
                         <div style="margin-top: 10px;">
@@ -1193,7 +1193,7 @@ function openSurgeryModal(patientId) {
                     <div style="background: #ffffff; padding: 12px; border: 1px solid #94a3b8; border-radius: 8px; text-align: center; height: 185px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; overflow: hidden;">
                         <img id="surgery-sig-preview-img" style="max-height: 100%; max-width: 100%; display: none; object-fit: contain;">
                         <div id="surgery-sig-placeholder" style="color: #94a3b8; display:flex; flex-direction:column; align-items:center; gap:8px;">
-                            <i class="fas fa-file-signature" style="font-size:32px;"></i>
+                            <i class="bi bi-file-earmark-ruled" style="font-size:32px;"></i>
                             <span style="font-style: italic; font-size: 13px;">Signature Preview<br>(हस्ताक्षर का लाइव प्रीव्यू)</span>
                         </div>
                     </div>
