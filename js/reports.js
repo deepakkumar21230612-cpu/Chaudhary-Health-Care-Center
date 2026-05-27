@@ -168,9 +168,9 @@ function renderReports() {
                     <img src="hlogo.png" alt="CHC Logo" style="height: 110px; width: auto; max-width: none; object-fit: contain;">
                 </div>
                 <div class="hospital-info" style="flex: 1 1 auto; text-align: center; white-space: nowrap;">
-                    <h1 class="hospital-title hospital-name" style="margin: 0; font-size: 23px; font-weight: 900; color: #2b6cb0; letter-spacing: 0.5px;">CHAUDHARY HEALTH CARE CENTER</h1>
-                    <h3 class="hospital-subtitle" style="margin: 4px 0 0; font-size: 13px; color: #e53e3e; text-transform: uppercase;">GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306</h3>
-                    <p style="margin: 4px 0 0; font-size: 13px; font-weight: bold; color: #2d3748;">Phone: (0542) 123456</p>
+                    <h1 class="hospital-title hospital-name" style="margin: 0; font-size: 23px; font-weight: 900; color: #2b6cb0; letter-spacing: 0.5px;">${window.hospitalSettings?.['hospital-name'] || 'CHAUDHARY HEALTH CARE CENTER'}</h1>
+                    <h3 class="hospital-subtitle hospital-address" style="margin: 4px 0 0; font-size: 13px; color: #e53e3e; text-transform: uppercase;">${window.hospitalSettings?.['hospital-address'] || 'GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306'}</h3>
+                    <p style="margin: 4px 0 0; font-size: 13px; font-weight: bold; color: #2d3748;">Phone: <span class="hospital-contact">${window.hospitalSettings?.['hospital-contact'] || '(0542) 123456'}</span></p>
                 </div>
                 <div style="flex: 0 0 auto; text-align: right; color: #718096; font-size: 12px; font-weight: bold; white-space: nowrap; margin-left: 15px;">
                     <div style="margin-bottom: 4px; color: #2d3748;">Date: <span id="auto-date-field-rep" style="border-bottom: 1px dashed #ccc; padding-bottom: 1px; min-width:70px; display:inline-block; text-align: center;"></span></div>

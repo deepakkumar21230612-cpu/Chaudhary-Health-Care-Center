@@ -24,13 +24,6 @@ async function syncPatientBilling(patientId) {
                     if (diffDays < 1) diffDays = 1;
                     grandTotal += (bed.daily_charge || 0) * diffDays;
                 });
-            } else if (patient.bed_no) {
-                const startDate = new Date(patient.admission_date);
-                const endDate = patient.discharge_date ? new Date(patient.discharge_date) : new Date();
-                const diffTime = Math.abs(endDate - startDate);
-                let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                if (diffDays < 1) diffDays = 1;
-                grandTotal += (patient.wardChargePerDay || 0) * diffDays;
             }
 
             // 2. Calculate Surgery charges
@@ -43,8 +36,8 @@ async function syncPatientBilling(patientId) {
             // 3. Add other billing items from the billing record (skip duplicate bed charges / surgery items)
             if (billing.items && billing.items.length > 0) {
                 billing.items.forEach(item => {
-                    const isBedCharge = item.name.startsWith('Bed Charge');
-                    const isSurgery = item.name.startsWith('Surgery:');
+                    const isBedCharge = item.name && item.name.startsWith('Bed Charge');
+                    const isSurgery = item.name && item.name.startsWith('Surgery:');
                     if (!isBedCharge && !isSurgery) {
                         grandTotal += (item.fee || 0) * (item.days || 1);
                     }
@@ -63,7 +56,7 @@ async function syncPatientBilling(patientId) {
 
         const netPayable = Math.max(0, grandTotal - discount);
         const pendingAmount = Math.max(0, netPayable - totalPaid);
-        const paymentStatus = (pendingAmount <= 0 && netPayable > 0) ? 'Paid' : 'Pending';
+        const paymentStatus = (pendingAmount <= 0) ? 'Paid' : 'Pending';
 
         patient.totalBill = grandTotal;
         patient.pending_amount = pendingAmount;
@@ -137,3 +130,21 @@ exports.deletePayment = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+exports.syncBillingStatus = async (req, res) => {
+    try {
+        await syncPatientBilling(req.params.patientId);
+        const patient = await Patient.findOne({ patient_id: req.params.patientId });
+        if (!patient) return res.status(404).json({ success: false, message: 'Patient not found' });
+        res.status(200).json({
+            success: true,
+            payment_status: patient.payment_status,
+            pending_amount: patient.pending_amount,
+            totalBill: patient.totalBill
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.syncPatientBilling = syncPatientBilling;

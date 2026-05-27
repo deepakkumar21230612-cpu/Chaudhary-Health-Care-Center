@@ -69,9 +69,56 @@ function getWardType(bedNo) {
 
 exports.createPatient = async (req, res) => {
     try {
-        const newPatient = new Patient(req.body);
-        
-        // Initialize bed history if a bed is assigned
+        // ── Step 1: Generate Sequential Patient ID (YYYYMMDD-001) ──
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const datePrefix = `P-${y}${m}${d}`;
+
+        // Count how many patients already exist today
+        let countToday = 0;
+        try {
+            countToday = await Patient.countDocuments({
+                patient_id: { $regex: `^${datePrefix}-` }
+            });
+        } catch (countErr) {
+            console.error('[createPatient] countDocuments failed:', countErr.message);
+        }
+
+        // Find a unique ID
+        let sequentialId = null;
+        let seq = countToday + 1;
+        for (let attempts = 0; attempts < 100; attempts++) {
+            const candidateId = `${datePrefix}-${String(seq).padStart(3, '0')}`;
+            try {
+                const exists = await Patient.findOne({ patient_id: candidateId });
+                if (!exists) {
+                    sequentialId = candidateId;
+                    break;
+                }
+            } catch (findErr) {
+                console.error('[createPatient] findOne failed:', findErr.message);
+                break;
+            }
+            seq++;
+        }
+
+        // Final fallback if all attempts fail
+        if (!sequentialId) {
+            sequentialId = `${datePrefix}-${String(Date.now()).slice(-4)}`;
+        }
+
+        console.log('[createPatient] Final patient_id:', sequentialId);
+
+        // ── Step 2: Build and Save Patient ──
+        const bodyData = { ...req.body };
+        delete bodyData.patient_id; // Remove any client-sent ID
+
+        const newPatient = new Patient(bodyData);
+        newPatient.patient_id = sequentialId;
+
+        // Initialize bed history
         if (newPatient.bed_no) {
             newPatient.bedHistory = [{
                 ward_type: getWardType(newPatient.bed_no),
@@ -80,8 +127,9 @@ exports.createPatient = async (req, res) => {
                 start_date: newPatient.admission_date || Date.now()
             }];
         }
-        
+
         await newPatient.save();
+        console.log('[createPatient] Saved successfully:', newPatient.patient_id);
 
         // Send email/push notifications asynchronously in the background
         setTimeout(async () => {
@@ -134,6 +182,7 @@ exports.createPatient = async (req, res) => {
 
         res.status(201).json({ success: true, patient: newPatient });
     } catch (error) {
+        console.error('[createPatient] ERROR:', error.message, error.stack);
         res.status(500).json({ success: false, error: error.message });
     }
 };

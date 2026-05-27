@@ -37,7 +37,30 @@ app.use('/api/integrations', integrationsRoutes);
 
 // Database Connection
 mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('MongoDB Connected successfully'))
+    .then(() => {
+        console.log('MongoDB Connected successfully');
+
+        // Start User Cleanup Job
+        const User = require('./src/models/User');
+        const runUserCleanup = async () => {
+            try {
+                const threshold = new Date(Date.now() - 24 * 60 * 60 * 1000); // 24 hours ago
+                const result = await User.deleteMany({
+                    status: 'pending',
+                    createdAt: { $lt: threshold }
+                });
+                if (result.deletedCount > 0) {
+                    console.log(`[Cleanup] Deleted ${result.deletedCount} pending user(s) older than 24 hours.`);
+                }
+            } catch (err) {
+                console.error('[Cleanup] User cleanup error:', err);
+            }
+        };
+
+        // Run cleanup on startup and schedule it hourly
+        runUserCleanup();
+        setInterval(runUserCleanup, 3600000);
+    })
     .catch(err => console.log('MongoDB Connection Error:', err));
 
 // API Ping

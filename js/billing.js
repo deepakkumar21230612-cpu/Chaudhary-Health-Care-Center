@@ -104,9 +104,9 @@ function renderBilling() {
                     <div class="chk-header">
                         <div class="hospital-logo"><img src="hlogo.png" alt="Logo"></div>
                         <div class="hospital-info">
-                            <h1 class="hospital-title hospital-name">CHAUDHARY HEALTH CARE CENTER</h1>
-                            <h3 class="hospital-subtitle">GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306</h3>
-                            <p style="font-size:11px; margin-top:5px; font-weight:700; color:#475569;">Helpline: +91 9935100000 | Email: contact@chchealth.com</p>
+                            <h1 class="hospital-title hospital-name">${window.hospitalSettings?.['hospital-name'] || 'CHAUDHARY HEALTH CARE CENTER'}</h1>
+                            <h3 class="hospital-subtitle hospital-address">${window.hospitalSettings?.['hospital-address'] || 'GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306'}</h3>
+                            <p style="font-size:11px; margin-top:5px; font-weight:700; color:#475569;">Helpline: <span class="hospital-contact">${window.hospitalSettings?.['hospital-contact'] || '+91 9935100000'}</span> | Email: <span class="hospital-email">${window.hospitalSettings?.['hospital-email'] || 'contact@chchealth.com'}</span></p>
                         </div>
                         <div class="report-meta" style="text-align: right;">
                             <div style="font-size:11px; font-weight:700;">Date: <span id="auto-date-field-bill"></span></div>
@@ -404,14 +404,31 @@ function initializeBillingTable(items = [], bedHistory = [], surgeries = []) {
 
     // Dynamically add bed history rows
     if (bedHistory && bedHistory.length > 0) {
-        bedHistory.forEach((bed) => {
+        bedHistory.forEach((bed, bedIndex) => {
             const startDate = new Date(bed.start_date);
             const endDate = bed.end_date ? new Date(bed.end_date) : new Date();
-            
-            // Calculate days (minimum 1 day)
+
+            // Calculate actual days stayed
             const diffTime = Math.abs(endDate - startDate);
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays < 1) diffDays = 1;
+
+            // ── Smart Minimum Day Logic ──
+            // First bed (admission) always gets minimum 1 day (initial charge was already paid at admission)
+            // ICU / Private upgraded stay: always minimum 1 day
+            // General ward re-entry (after ICU/Private): if 0 days → skip, patient paid general on admission day
+            const wardType = (bed.ward_type || '').toLowerCase();
+            const isGeneralReEntry = bedIndex > 0 && (wardType === 'general' || wardType === '');
+            
+            if (isGeneralReEntry) {
+                // Only apply minimum 1 if they actually stayed at least 1 day in general again
+                if (diffDays < 1) diffDays = 0; // 0 days = free (admission day already charged)
+            } else {
+                // First stay OR ICU/Private: always bill minimum 1 day
+                if (diffDays < 1) diffDays = 1;
+            }
+
+            // Skip rows with 0 days (same-day re-entry to general)
+            if (diffDays === 0) return;
 
             const itemName = `Bed Charge (${bed.ward_type} - ${bed.bed_no})`;
             html += `
@@ -482,7 +499,7 @@ function calculateBillingTotals() {
 
     const statusEl = document.getElementById('bill-status');
     const due = net - paid;
-    if (due <= 0 && net > 0) { statusEl.textContent = 'Paid'; statusEl.style.background = '#ecfdf5'; statusEl.style.color = '#10b981'; }
+    if (due <= 0) { statusEl.textContent = 'Paid'; statusEl.style.background = '#ecfdf5'; statusEl.style.color = '#10b981'; }
     else if (paid > 0) { statusEl.textContent = 'Partial'; statusEl.style.background = '#fffbeb'; statusEl.style.color = '#f59e0b'; }
     else { statusEl.textContent = 'Pending'; statusEl.style.background = '#fef2f2'; statusEl.style.color = '#ef4444'; }
 

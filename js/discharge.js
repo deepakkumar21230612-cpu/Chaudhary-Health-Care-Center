@@ -116,9 +116,9 @@ function renderDischarge() {
                             <img src="hlogo.png" alt="CHC Logo" style="height: 110px; width: auto; max-width: none; object-fit: contain;">
                         </div>
                         <div class="hospital-info" style="flex: 1 1 auto; text-align: center; white-space: nowrap;">
-                            <h1 class="hospital-title hospital-name" style="margin: 0; font-size: 23px; font-weight: 900; color: #2b6cb0; letter-spacing: 0.5px;">CHAUDHARY HEALTH CARE CENTER</h1>
-                            <h3 class="hospital-subtitle" style="margin: 4px 0 0; font-size: 13px; color: #e53e3e; text-transform: uppercase;">GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306</h3>
-                            <p style="margin: 4px 0 0; font-size: 13px; font-weight: bold; color: #2d3748;">Phone: (0542) 123456</p>
+                            <h1 class="hospital-title hospital-name" style="margin: 0; font-size: 23px; font-weight: 900; color: #2b6cb0; letter-spacing: 0.5px;">${window.hospitalSettings?.['hospital-name'] || 'CHAUDHARY HEALTH CARE CENTER'}</h1>
+                            <h3 class="hospital-subtitle hospital-address" style="margin: 4px 0 0; font-size: 13px; color: #e53e3e; text-transform: uppercase;">${window.hospitalSettings?.['hospital-address'] || 'GANDHI CHAURAHA, MEJA WALI ROAD, KORAON-PRAYAGRAJ 212306'}</h3>
+                            <p style="margin: 4px 0 0; font-size: 13px; font-weight: bold; color: #2d3748;">Phone: <span class="hospital-contact">${window.hospitalSettings?.['hospital-contact'] || '(0542) 123456'}</span></p>
                         </div>
                         <div style="flex: 0 0 auto; text-align: right; color: #718096; font-size: 12px; font-weight: bold; white-space: nowrap; margin-left: 15px;">
                             <div style="margin-bottom: 4px; color: #2d3748;">Date: <span id="auto-date-field" style="border-bottom: 1px dashed #ccc; padding-bottom: 1px; min-width:70px; display:inline-block; text-align: center;"></span></div>
@@ -294,45 +294,42 @@ function confirmDischarge() {
         return;
     }
 
-    // Check if billing is complete before discharging
+    // First sync billing status in real-time, then check
     showLoading('Verifying billing status...');
-    fetch(`${API_BASE}patients/${patientId}`, {
+    fetch(`${API_BASE}billing/${patientId}/sync`, {
+        method: 'POST',
         headers: { 'Authorization': 'Bearer ' + sessionStorage.getItem('token') }
     })
     .then(res => res.json())
-    .then(result => {
-        hideLoading();
-        if (result.success && result.patient) {
-            const patient = result.patient;
-            if (patient.payment_status !== 'Paid') {
-                showNotification('Cannot discharge patient: Billing is not complete.', 'error');
-                showModule('billing');
-                setTimeout(() => {
-                    viewBill(patientId);
-                }, 150);
-            } else {
-                const patientName = document.getElementById('d-name').value || 'this patient';
-                document.getElementById('discharge-confirm-patient-name').textContent = patientName;
-                
-                const confirmModal = document.getElementById('discharge-confirm-modal');
-                if (confirmModal) confirmModal.classList.add('active');
+    .then(syncResult => {
+        if (syncResult.success && syncResult.payment_status === 'Paid') {
+            hideLoading();
+            const patientName = document.getElementById('d-name').value || 'this patient';
+            document.getElementById('discharge-confirm-patient-name').textContent = patientName;
+            
+            const confirmModal = document.getElementById('discharge-confirm-modal');
+            if (confirmModal) confirmModal.classList.add('active');
 
-                const confirmBtn = document.getElementById('btn-confirm-discharge-action');
-                if (confirmBtn) {
-                    confirmBtn.onclick = function() {
-                        if (confirmModal) confirmModal.classList.remove('active');
-                        executeDischarge(patientId, diagnosis, summary, dischargeDate, dischargeTime);
-                    };
-                }
+            const confirmBtn = document.getElementById('btn-confirm-discharge-action');
+            if (confirmBtn) {
+                confirmBtn.onclick = function() {
+                    if (confirmModal) confirmModal.classList.remove('active');
+                    executeDischarge(patientId, diagnosis, summary, dischargeDate, dischargeTime);
+                };
             }
         } else {
-            showNotification('Error checking patient status', 'error');
+            hideLoading();
+            showNotification('Cannot discharge patient: Billing is not complete. Pending: ₹' + (syncResult.pending_amount || 0), 'error');
+            showModule('billing');
+            setTimeout(() => {
+                viewBill(patientId);
+            }, 150);
         }
     })
     .catch(err => {
         hideLoading();
         console.error(err);
-        showNotification('Error checking patient status', 'error');
+        showNotification('Error checking patient billing status', 'error');
     });
 }
 

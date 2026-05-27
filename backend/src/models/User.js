@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+// Index for optimizing pending user status check and expiration cleanup
+userSchema.index({ status: 1, createdAt: 1 });
+
 // Hash password before saving
 userSchema.pre('save', async function() {
     if (!this.isModified('password')) return;

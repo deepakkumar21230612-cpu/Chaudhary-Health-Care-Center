@@ -200,7 +200,7 @@ async function renderSettings() {
                         <i class="bi bi-sliders"></i> <span>General</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-beds" onclick="showSettingsTab('beds')">
-                        <i class="bi bi-bed"></i> <span>Bed Management</span>
+                        <i class="fa-solid fa-bed"></i> <span>Bed Management</span>
                     </button>
                     <button class="settings-nav-btn" id="btn-tab-billing" onclick="showSettingsTab('billing')">
                         <i class="bi bi-credit-card"></i> <span>Billing</span>
@@ -250,7 +250,7 @@ async function renderSettings() {
                                 </div>
                                 <div class="form-group" style="grid-column: span 2;">
                                     <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%); border-radius:10px; border:1px solid #e0e7ff;">
-                                        <i class="bi bi-bed" style="color:#6366f1; font-size:18px;"></i>
+                                        <i class="fa-solid fa-bed" style="color:#6366f1; font-size:18px;"></i>
                                         <div>
                                             <strong style="color:#1e293b; font-size:13px;">Bed Configuration</strong>
                                             <p style="margin:2px 0 0; font-size:11px; color:#64748b;">Go to <a href="javascript:void(0)" onclick="showSettingsTab('beds')" style="color:#6366f1; font-weight:700; text-decoration:none;">Bed Management</a> tab to customize ward beds.</p>
@@ -357,7 +357,7 @@ async function renderSettings() {
                         </style>
                         
                         <div class="bed-mgmt-header">
-                                <i class="bi bi-bed"></i>
+                                <i class="fa-solid fa-bed"></i>
                                 <div>
                                     <h3>Bed Management</h3>
                                     <p>Configure ward-wise bed allocation for your hospital</p>
@@ -973,6 +973,21 @@ async function applyGlobalSettings() {
             const hName = result.settings['hospital-name'] || 'Chaudhary Health Care Center';
             document.querySelectorAll('.hospital-name').forEach(el => {
                 el.textContent = hName;
+            });
+
+            const hAddress = result.settings['hospital-address'] || 'Gandhi Chauraha, Meja wali road, Koraon-Prayagraj';
+            document.querySelectorAll('.hospital-address').forEach(el => {
+                el.textContent = hAddress;
+            });
+
+            const hContact = result.settings['hospital-contact'] || '(0542) 123456';
+            document.querySelectorAll('.hospital-contact').forEach(el => {
+                el.textContent = hContact;
+            });
+
+            const hEmail = result.settings['hospital-email'] || 'contact@chc-koraon.com';
+            document.querySelectorAll('.hospital-email').forEach(el => {
+                el.textContent = hEmail;
             });
 
             const backendMode = result.settings['theme-mode'] || 'light';

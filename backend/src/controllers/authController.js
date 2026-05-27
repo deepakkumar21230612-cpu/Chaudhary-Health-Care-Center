@@ -79,7 +79,8 @@ exports.login = async (req, res) => {
             name: user.name,
             role: user.role,
             email: user.email,
-            mobile: user.mobile
+            mobile: user.mobile,
+            avatar: user.avatar || null
         });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });

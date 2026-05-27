@@ -1,5 +1,10 @@
 // ==================== PATIENTS MODULE ====================
 
+// Role-based helper: only admin & doctor can see payment rupee amounts
+function canViewPayments() {
+    return currentUser && (currentUser.role === 'admin' || currentUser.role === 'doctor');
+}
+
 function renderPatients() {
     const moduleEl = document.getElementById('module-patients');
     if (!moduleEl) return;
@@ -22,11 +27,12 @@ function renderPatients() {
                     <option value="Admitted">Admitted</option>
                     <option value="Discharged">Discharged</option>
                 </select>
+                ${canViewPayments() ? `
                 <select class="filter-select" id="payment-filter" onchange="filterPatients()">
                     <option value="all">All Payments</option>
                     <option value="Paid">Paid</option>
                     <option value="Pending">Pending</option>
-                </select>
+                </select>` : ''}
                 <select class="filter-select" id="surgery-filter" onchange="filterPatients()">
                     <option value="all">All Cases (Surgery & Normal)</option>
                     <option value="surgery">Show Surgery Patients Only</option>
@@ -49,7 +55,7 @@ function renderPatients() {
                             <th>Bed No.</th>
                             <th>Admission Date</th>
                             <th>Status</th>
-                            <th>Payment Status</th>
+                            <th>${canViewPayments() ? 'Payment Status' : 'Pay Status'}</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -138,7 +144,7 @@ function renderPatientsTable(patientsList) {
 
             <td>
                 <span class="status-badge payment-${payStatus.toLowerCase()}">${payStatus}</span>
-                ${payStatus === 'Pending' && patient.pending_amount ?
+                ${canViewPayments() && payStatus === 'Pending' && patient.pending_amount ?
                 `<br><span style="color:#e67e22;font-size:11px;">${window.currencySymbol || '₹'}${patient.pending_amount} pending</span>` : ''}
             </td>
             <td class="action-buttons-cell">
@@ -307,7 +313,7 @@ function viewPatient(patientId) {
 
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7;">
                         <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; margin-bottom: 8px;">
-                            <i class="bi bi-bed"></i> Bed Assignment
+                            <i class="fa-solid fa-bed"></i> Bed Assignment
                         </div>
                         <div style="color: #2d3748; font-weight: 600; font-size: 14px;">${bed}</div>
                     </div>
@@ -369,7 +375,7 @@ function viewPatient(patientId) {
                                         ` : ''}
                                     </div>
                                     <div style="text-align: right; color: #805ad5; font-weight: 700; font-size: 14px; white-space: nowrap;">
-                                        ${window.currencySymbol || '₹'}${s.cost}
+                                        ${canViewPayments() ? `${window.currencySymbol || '₹'}${s.cost}` : '<span style="color:#a0aec0;font-size:12px;">🔒</span>'}
                                     </div>
                                 </div>
                             `).join('')}
@@ -381,10 +387,10 @@ function viewPatient(patientId) {
                     <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #edf2f7; grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div style="font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700;">Billing Summary</div>
-                            <div style="font-size: 12px; color: #718096;">Total Bill: ${window.currencySymbol || '₹'}${totalBill}</div>
+                            ${canViewPayments() ? `<div style="font-size: 12px; color: #718096;">Total Bill: ${window.currencySymbol || '₹'}${totalBill}</div>` : ''}
                             <span class="status-badge payment-${payStatus.toLowerCase()}">${payStatus}</span>
                         </div>
-                        ${payStatus === 'Pending' ? `
+                        ${canViewPayments() && payStatus === 'Pending' ? `
                             <div style="text-align: right;">
                                 <div style="font-size: 12px; color: #718096;">Balance Due</div>
                                 <div style="color: #e53e3e; font-size: 18px; font-weight: 800;">${window.currencySymbol || '₹'}${amountDue}</div>
@@ -473,7 +479,7 @@ function editPatient(patientId) {
                     
                     <div style="background: #edf2f7; padding: 15px; border-radius: 10px;">
                         <h4 style="margin: 0 0 10px 0; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-                            <i class="bi bi-bed"></i> Change Ward / Bed
+                            <i class="fa-solid fa-bed"></i> Change Ward / Bed
                         </h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                             <div>

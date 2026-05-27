@@ -7,7 +7,7 @@ function renderDashboard() {
     const role = currentUser?.role || 'admin';
 
     const showCharts = (role === 'admin');
-    const showFinancials = (role === 'admin');
+    const showFinancials = (role === 'admin' || role === 'doctor');
 
     // Role-specific greeting subtitle
     const roleSubtitle = {
@@ -330,9 +330,10 @@ async function updateDashboardStats() {
         if (rec && rec.payments) {
             rec.payments.forEach(pay => {
                 totalPaid += (pay.amount || 0);
+                const amtDisplay = showFinancials ? `${window.currencySymbol || '₹'}${pay.amount}` : 'payment';
                 allActivities.push({
                     time: new Date(pay.date || Date.now()).getTime(),
-                    text: `Payment ${window.currencySymbol || '₹'}${pay.amount} received from ${p.name}`,
+                    text: `${amtDisplay} received from ${p.name}`,
                     icon: 'bi-coin',
                     color: '#2ecc71'
                 });
@@ -377,7 +378,7 @@ async function updateDashboardStats() {
     const curr = window.currencySymbol || '₹';
 
     const role = currentUser?.role || 'admin';
-    const showFinancials = (role === 'admin');
+    const showFinancials = (role === 'admin' || role === 'doctor');
 
     // 1. Populate Metrics Cards
     document.getElementById('dashboard-metrics').innerHTML = `

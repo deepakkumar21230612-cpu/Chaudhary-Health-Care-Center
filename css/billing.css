@@ -467,6 +467,7 @@
 .chk-header {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     border-bottom: 2px solid #1e293b;
     padding-bottom: 15px;
     margin-bottom: 20px;
@@ -669,5 +670,5 @@
     .billing-tabs { width: 100%; overflow-x: auto; }
     .a4-bill-container { padding: 20px; }
     .patient-info-summary { flex-direction: column; }
-    .chk-header { flex-direction: column; text-align: center; }
+    .chk-header { flex-direction: row; text-align: left; justify-content: flex-start; }
 }

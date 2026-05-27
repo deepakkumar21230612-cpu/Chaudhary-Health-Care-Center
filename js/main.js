@@ -111,7 +111,8 @@ async function login() {
                 name: result.name,
                 role: result.role,
                 email: result.email,
-                mobile: result.mobile
+                mobile: result.mobile,
+                avatar: result.avatar || null
             };
 
             sessionStorage.setItem('user', JSON.stringify(currentUser));
@@ -1059,21 +1060,300 @@ function closeProfileModal() {
     document.getElementById('profile-modal').style.display = 'none';
 }
 
+// Compress image using Canvas — resizes to max dimensions and compresses quality
+function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                // Calculate new dimensions maintaining aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) {
+                            reject(new Error('Image compression failed'));
+                            return;
+                        }
+                        // Convert blob to File object
+                        const compressedFile = new File([blob], file.name.replace(/\.\w+$/, '.jpg'), {
+                            type: 'image/jpeg',
+                            lastModified: Date.now()
+                        });
+                        const originalKB = Math.round(file.size / 1024);
+                        const compressedKB = Math.round(compressedFile.size / 1024);
+                        console.log(`Image compressed: ${originalKB}KB → ${compressedKB}KB (${width}x${height})`);
+                        resolve(compressedFile);
+                    },
+                    'image/jpeg',
+                    quality
+                );
+            };
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+    });
+}
+
+// Store compressed file for upload
+let compressedAvatarFile = null;
+let originalAvatarFile = null;
+
+// Cropper State Variables
+let cropZoom = 1.0;
+let cropImgX = 0;
+let cropImgY = 0;
+let baseWidth = 0;
+let baseHeight = 0;
+let isDraggingCrop = false;
+let dragStartMouseX = 0;
+let dragStartMouseY = 0;
+let dragStartImgX = 0;
+let dragStartImgY = 0;
+let cropImageObj = null;
+
 function previewAvatar(event) {
     const file = event.target.files[0];
     if (file) {
+        originalAvatarFile = file;
         const reader = new FileReader();
         reader.onload = function (e) {
-            document.getElementById('profile-avatar-large').innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-            const photoBtn = document.getElementById('save-photo-btn');
-            if (photoBtn) photoBtn.style.display = 'block'; // Show button after selection
+            const previewImg = document.getElementById('crop-preview-img');
+            if (previewImg) {
+                previewImg.src = e.target.result;
+                
+                // Wait for the image to load to compute dimensions
+                cropImageObj = new Image();
+                cropImageObj.onload = function() {
+                    const workspaceWidth = 320;
+                    const workspaceHeight = 320;
+                    const ratio = cropImageObj.naturalWidth / cropImageObj.naturalHeight;
+                    
+                    // Scale image to cover workspace (320x320)
+                    if (ratio > 1) {
+                        baseHeight = workspaceHeight;
+                        baseWidth = workspaceHeight * ratio;
+                    } else {
+                        baseWidth = workspaceWidth;
+                        baseHeight = workspaceWidth / ratio;
+                    }
+                    
+                    // Center the image in workspace
+                    cropZoom = 1.0;
+                    cropImgX = (workspaceWidth - baseWidth) / 2;
+                    cropImgY = (workspaceHeight - baseHeight) / 2;
+                    
+                    // Reset zoom slider
+                    const zoomSlider = document.getElementById('crop-zoom');
+                    if (zoomSlider) {
+                        zoomSlider.value = 1.0;
+                    }
+                    
+                    updateCropImageUI();
+                    initCropEvents();
+                    
+                    // Show crop modal
+                    document.getElementById('crop-modal').style.display = 'flex';
+                };
+                cropImageObj.src = e.target.result;
+            }
         };
         reader.readAsDataURL(file);
     }
 }
 
+function updateCropImageUI() {
+    const previewImg = document.getElementById('crop-preview-img');
+    if (!previewImg) return;
+    
+    const w = baseWidth * cropZoom;
+    const h = baseHeight * cropZoom;
+    
+    previewImg.style.width = `${w}px`;
+    previewImg.style.height = `${h}px`;
+    previewImg.style.left = `${cropImgX}px`;
+    previewImg.style.top = `${cropImgY}px`;
+}
+
+function handleCropZoom(zoomVal) {
+    const prevZoom = cropZoom;
+    cropZoom = parseFloat(zoomVal);
+    
+    const cx = 160; // Workspace center X
+    const cy = 160; // Workspace center Y
+    
+    const pctX = (cx - cropImgX) / (baseWidth * prevZoom);
+    const pctY = (cy - cropImgY) / (baseHeight * prevZoom);
+    
+    let nextX = cx - pctX * baseWidth * cropZoom;
+    let nextY = cy - pctY * baseHeight * cropZoom;
+    
+    // Constrain so crop circle (220x220 at center) is covered.
+    // Crop box is from 50 to 270 on both axes.
+    const w = baseWidth * cropZoom;
+    const h = baseHeight * cropZoom;
+    
+    if (nextX > 50) nextX = 50;
+    if (nextX + w < 270) nextX = 270 - w;
+    if (nextY > 50) nextY = 50;
+    if (nextY + h < 270) nextY = 270 - h;
+    
+    cropImgX = nextX;
+    cropImgY = nextY;
+    
+    updateCropImageUI();
+}
+
+let cropEventsBound = false;
+function initCropEvents() {
+    if (cropEventsBound) return;
+    const workspace = document.getElementById('crop-workspace');
+    if (!workspace) return;
+    
+    const dragStart = (e) => {
+        isDraggingCrop = true;
+        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        dragStartMouseX = clientX;
+        dragStartMouseY = clientY;
+        dragStartImgX = cropImgX;
+        dragStartImgY = cropImgY;
+        
+        // Prevent default browser dragging
+        if (e.cancelable) e.preventDefault();
+    };
+    
+    const dragMove = (e) => {
+        if (!isDraggingCrop) return;
+        const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : dragStartMouseX);
+        const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : dragStartMouseY);
+        const dx = clientX - dragStartMouseX;
+        const dy = clientY - dragStartMouseY;
+        
+        let nextX = dragStartImgX + dx;
+        let nextY = dragStartImgY + dy;
+        
+        const w = baseWidth * cropZoom;
+        const h = baseHeight * cropZoom;
+        
+        // Crop box: X [50, 270], Y [50, 270] (center 220x220 area in 320x320 workspace)
+        if (nextX > 50) nextX = 50;
+        if (nextX + w < 270) nextX = 270 - w;
+        if (nextY > 50) nextY = 50;
+        if (nextY + h < 270) nextY = 270 - h;
+        
+        cropImgX = nextX;
+        cropImgY = nextY;
+        updateCropImageUI();
+    };
+    
+    const dragEnd = () => {
+        isDraggingCrop = false;
+    };
+    
+    // Mouse Events
+    workspace.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('mouseup', dragEnd);
+    
+    // Touch Events
+    workspace.addEventListener('touchstart', dragStart, { passive: false });
+    document.addEventListener('touchmove', dragMove, { passive: false });
+    document.addEventListener('touchend', dragEnd);
+    
+    cropEventsBound = true;
+}
+
+function closeCropModal() {
+    document.getElementById('crop-modal').style.display = 'none';
+    document.getElementById('avatar-upload').value = ''; // Clear file input
+}
+
+function applyCrop() {
+    if (!cropImageObj) return;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = 400; // Output cropped width
+    canvas.height = 400; // Output cropped height
+    const ctx = canvas.getContext('2d');
+    
+    // Calculate cropped area
+    // Workspace coordinates of the crop area: X: 50, Y: 50, size: 220
+    const cropSize = 220;
+    const w = baseWidth * cropZoom;
+    const h = baseHeight * cropZoom;
+    
+    // Relative coordinates of crop box top-left inside the image in workspace coordinates
+    const cropXInImg = 50 - cropImgX;
+    const cropYInImg = 50 - cropImgY;
+    
+    // Scale factor to map workspace coordinates to natural image dimensions
+    const scaleX = cropImageObj.naturalWidth / w;
+    const scaleY = cropImageObj.naturalHeight / h;
+    
+    const sx = cropXInImg * scaleX;
+    const sy = cropYInImg * scaleY;
+    const sw = cropSize * scaleX;
+    const sh = cropSize * scaleY;
+    
+    // Draw onto canvas
+    ctx.drawImage(cropImageObj, sx, sy, sw, sh, 0, 0, 400, 400);
+    
+    canvas.toBlob((blob) => {
+        if (!blob) {
+            showNotification('Failed to generate crop image', 'error');
+            return;
+        }
+        
+        const filename = originalAvatarFile ? originalAvatarFile.name.replace(/\.\w+$/, '.jpg') : 'avatar.jpg';
+        compressedAvatarFile = new File([blob], filename, {
+            type: 'image/jpeg',
+            lastModified: Date.now()
+        });
+        
+        // Show preview in profile modal
+        const croppedSizeKB = Math.round(compressedAvatarFile.size / 1024);
+        console.log(`Cropped image size: ${croppedSizeKB}KB`);
+        
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('profile-avatar-large').innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+            
+            // Auto-upload immediately upon cropping
+            saveProfilePhoto();
+        };
+        reader.readAsDataURL(compressedAvatarFile);
+        
+        closeCropModal();
+    }, 'image/jpeg', 0.85);
+}
+
 async function saveProfilePhoto() {
-    const avatarFile = document.getElementById('avatar-upload').files[0];
+    // Use compressed file if available, fallback to original
+    const avatarFile = compressedAvatarFile || document.getElementById('avatar-upload').files[0];
     if (!avatarFile) return;
 
     const formData = new FormData();
@@ -1098,6 +1378,7 @@ async function saveProfilePhoto() {
             updateUserInfo();
             const photoBtn = document.getElementById('save-photo-btn');
             if (photoBtn) photoBtn.style.display = 'none';
+            compressedAvatarFile = null; // Clear after successful upload
         } else {
             showNotification(result.message || 'Upload failed', 'error');
         }
@@ -1357,6 +1638,12 @@ async function initPushNotifications() {
 }
 
 window.initPushNotifications = initPushNotifications;
+
+// Expose crop functions to global scope
+window.previewAvatar = previewAvatar;
+window.handleCropZoom = handleCropZoom;
+window.closeCropModal = closeCropModal;
+window.applyCrop = applyCrop;
 
 // Handle browser Back/Forward (hash change) events for step-wise navigation
 window.addEventListener('hashchange', function () {

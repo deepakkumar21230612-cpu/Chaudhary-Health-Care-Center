@@ -210,9 +210,6 @@ async function addPatient() {
     showLoading('Admitting patient...');
 
     try {
-        const timestamp = Date.now();
-        const patientId = `P-${timestamp.toString().slice(-6)}`;
-
         const settings = window.hospitalSettings || {};
         const isICU = bed.toLowerCase().includes('icu');
         const dailyCharge = isICU ? (parseFloat(settings['icu-charge']) || 5000) : (parseFloat(settings['ward-charge']) || 2000);
@@ -220,7 +217,6 @@ async function addPatient() {
         const baseTotal = dailyCharge + doctorFee;
 
         const newPatient = {
-            patient_id: patientId,
             name, age: parseInt(age), gender, mobile, email,
             guardian_name: guardian,
             bed_no: bed,
@@ -246,11 +242,11 @@ async function addPatient() {
         hideLoading();
 
         if (result.success) {
-            showNotification(`Patient ${name} admitted successfully! ID: ${patientId}`, 'success');
+            showNotification(`Patient ${name} admitted successfully! ID: ${result.patient.patient_id}`, 'success');
             document.getElementById('patient-form').reset();
             showModule('patients');
         } else {
-            showNotification(result.message || 'Failed to add patient', 'error');
+            showNotification(result.message || result.error || 'Failed to add patient', 'error');
         }
     } catch (error) {
         console.error('Error adding patient:', error);

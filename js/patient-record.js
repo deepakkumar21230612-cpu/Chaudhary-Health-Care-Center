@@ -2,6 +2,11 @@
 let currentRecordPatientId = null;
 let allPatientsForRecord = []; // API-fetched cache
 
+// Role-based helper: only admin & doctor can see payment amounts
+function canViewPaymentsInRecord() {
+    return currentUser && (currentUser.role === 'admin' || currentUser.role === 'doctor');
+}
+
 // ── Date / Time Formatting Helpers ──────────────────────────────────────
 function fmtDate(val) {
     if (!val) return '';
@@ -188,7 +193,7 @@ function renderPatientRecord() {
                         
                         <!-- 1. Ward & Bed Stay timeline -->
                         <div style="margin-bottom: 25px;">
-                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-bed"></i> 1. Ward & Bed Stay Timeline</h4>
+                            <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="fa-solid fa-bed"></i> 1. Ward & Bed Stay Timeline</h4>
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                 <thead>
                                     <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1; text-align: left;">
@@ -265,7 +270,7 @@ function renderPatientRecord() {
                         </div>
 
                         <!-- 5. Final billing & Payments summary -->
-                        <div>
+                        <div id="journey-billing-section">
                             <h4 style="color: #2b6cb0; margin-bottom: 8px; border-bottom: 2px solid #edf2f7; padding-bottom: 5px; font-weight: bold; font-size: 14px;"><i class="bi bi-file-earmark-medical"></i> 5. Final Billing & Financial Ledger</h4>
                             <div style="display: flex; justify-content: space-between; gap: 20px; font-size: 12px; align-items: flex-start;">
                                 <div style="flex: 1.2;">
@@ -646,6 +651,12 @@ function savePatientRecord() {
 }
 
 async function populatePatientJourney(patientId, p) {
+    // Hide billing section for non-admin/non-doctor roles
+    const billingSec = document.getElementById('journey-billing-section');
+    if (billingSec) {
+        billingSec.style.display = canViewPaymentsInRecord() ? '' : 'none';
+    }
+
     // Try to fetch discharge summary from server
     try {
         const dischargeRes = await fetch(`${API_BASE}discharge/${patientId}`, {
@@ -811,51 +822,22 @@ async function populatePatientJourney(patientId, p) {
                     }
                 }
 
-                // Billing totals
+                // Billing totals — use billing record items directly (same as billing.js)
                 const disc = parseFloat(patientBill.discount) || 0;
                 const totalPaid = (patientBill.payments || []).reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
                 
+                // Sum ALL items from the saved billing record (authoritative source)
                 let grandTotal = 0;
-                
-                // 1. Bed Stay charges
-                if (p && p.bedHistory && p.bedHistory.length > 0) {
-                    p.bedHistory.forEach(bed => {
-                        const startDate = new Date(bed.start_date);
-                        const endDate = bed.end_date ? new Date(bed.end_date) : new Date();
-                        const diffTime = Math.abs(endDate - startDate);
-                        let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        if (diffDays < 1) diffDays = 1;
-                        grandTotal += (bed.daily_charge || 0) * diffDays;
-                    });
-                } else if (p && p.bed_no) {
-                    const startDate = new Date(p.admission_date);
-                    const endDate = p.discharge_date ? new Date(p.discharge_date) : new Date();
-                    const diffTime = Math.abs(endDate - startDate);
-                    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (diffDays < 1) diffDays = 1;
-                    grandTotal += (p.wardChargePerDay || 0) * diffDays;
-                }
-
-                // 2. Surgery charges
-                if (p && p.surgeries && p.surgeries.length > 0) {
-                    p.surgeries.forEach(s => {
-                        grandTotal += (s.cost || 0);
-                    });
-                }
-
-                // 3. Add other billing items from the billing record (skip duplicate bed charges / surgery items)
                 if (patientBill.items && patientBill.items.length > 0) {
                     patientBill.items.forEach(item => {
-                        const isBedCharge = item.name.startsWith('Bed Charge');
-                        const isSurgery = item.name.startsWith('Surgery:');
-                        if (!isBedCharge && !isSurgery) {
-                            grandTotal += (parseFloat(item.fee) || 0) * (parseFloat(item.days) || 1);
-                        }
+                        const fee = parseFloat(item.fee) || 0;
+                        const days = parseFloat(item.days) || 0;
+                        grandTotal += fee * (days || 1);
                     });
                 }
                 
-                const netPayable = grandTotal - disc;
-                const balDue = netPayable - totalPaid;
+                const netPayable = Math.max(0, grandTotal - disc);
+                const balDue = Math.max(0, netPayable - totalPaid);
 
                 document.getElementById('j-total-bill').textContent = `₹${grandTotal}`;
                 document.getElementById('j-discount').textContent = `₹${disc}`;
@@ -875,21 +857,23 @@ async function populatePatientJourney(patientId, p) {
                 
                 // 1. Bed Stay charges
                 if (p && p.bedHistory && p.bedHistory.length > 0) {
-                    p.bedHistory.forEach(bed => {
+                    p.bedHistory.forEach((bed, bedIndex) => {
                         const startDate = new Date(bed.start_date);
                         const endDate = bed.end_date ? new Date(bed.end_date) : new Date();
                         const diffTime = Math.abs(endDate - startDate);
                         let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        if (diffDays < 1) diffDays = 1;
+
+                        // Smart logic: General re-entry same day → 0 charge
+                        const wardType = (bed.ward_type || '').toLowerCase();
+                        const isGeneralReEntry = bedIndex > 0 && (wardType === 'general' || wardType === '');
+                        if (isGeneralReEntry) {
+                            if (diffDays < 1) diffDays = 0;
+                        } else {
+                            if (diffDays < 1) diffDays = 1;
+                        }
+
                         grandTotal += (bed.daily_charge || 0) * diffDays;
                     });
-                } else if (p && p.bed_no) {
-                    const startDate = new Date(p.admission_date);
-                    const endDate = p.discharge_date ? new Date(p.discharge_date) : new Date();
-                    const diffTime = Math.abs(endDate - startDate);
-                    let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (diffDays < 1) diffDays = 1;
-                    grandTotal += (p.wardChargePerDay || 0) * diffDays;
                 }
 
                 // 2. Surgery charges
